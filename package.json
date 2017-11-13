@@ -1,6 +1,10 @@
 {
   "dependencies": {
-    "express": "^4.15.2"
+    "body-parser": "^1.17.2",
+    "debug": "^2.6.8",
+    "express": "^4.15.3",
+    "mongoose": "^4.10.8",
+    "morgan": "^1.8.2",
   },
   "keywords": [
     "server",
@@ -8,6 +12,10 @@
   ],
   "repository": "https://github.com/vitusortner/quo-backend",
   "name": "BackendForQuo",
+  "contributors": [
+    "Nora Koreuber",
+    "Florian Schlüter"
+  ],
   "version": "1.0.0",
   "main": "app.js",
   "devDependencies": {
