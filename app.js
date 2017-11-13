@@ -26,6 +26,7 @@ var component = require('./routes/components');
 var app = express();
 
 //Middleware
+app.use(bodyParser.json());
 
 // logging
 app.use(morgan('dev'));
