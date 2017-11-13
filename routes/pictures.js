@@ -13,7 +13,6 @@
 
 // modules
 var express = require('express');
-var logger = require('debug')('we2:pins');
 var codes = require('../restapi/http-codes');
 var HttpError = require('../restapi/http-error.js');
 
