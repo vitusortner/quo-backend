@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "express": "^4.15.2"
+  },
+  "keywords": [
+    "server",
+    "simple app"
+  ],
+  "repository": "https://github.com/vitusortner/quo-backend",
+  "name": "BackendForQuo",
+  "version": "1.0.0",
+  "main": "app.js",
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  }
+}
