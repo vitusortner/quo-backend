@@ -16,6 +16,11 @@ var restAPIchecks = require('./restapi/request-checks');
 var errorResponseWare = require('./restapi/error-response');
 var HttpError = require('./restapi/http-error');
 
+var user = require('./routes/users');
+var picture = require('./routes/pictures');
+var place = require('./routes/places');
+var component = require('./routes/components');
+
 
 // app creation
 var app = express();
@@ -29,7 +34,10 @@ app.use(morgan('dev'));
 app.use(restAPIchecks);
 
 // Routes
-
+app.use('/users',user);
+app.use('/places',place);
+app.use('/pictures',picture);
+app.use('/components',component);
 
 // (from express-generator boilerplate  standard code)
 // Errorhandling and requests without proper URLs ************************
