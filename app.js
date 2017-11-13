@@ -35,7 +35,7 @@ app.use(restAPIchecks);
 // Errorhandling and requests without proper URLs ************************
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-    debug('Catching unmatched request to answer with 404');
+    console.log('Catching unmatched request to answer with 404');
     var err = new HttpError('Not Found', 404);
     next(err);
 });
@@ -46,9 +46,9 @@ errorResponseWare(app);
 // Start server ****************************
 app.listen(3000, function(err) {
     if (err !== undefined) {
-        debug('Error on startup, ',err);
+        console.log('Error on startup, ',err);
     }
     else {
-        debug('Listening on port 3000');
+        console.log('Listening on port 3000');
     }
 });
