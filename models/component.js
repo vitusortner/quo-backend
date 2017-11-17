@@ -25,7 +25,12 @@ var ComponentSchema = new Schema({
         type: String
     },
     picture: {
-        type: ObjectId
+        type: ObjectId,
+        validate:{
+            validator: validator.isMongoId,
+            message: '{VALUE} is not a valid object id',
+            isAsync: false
+        }
     } },{
     timestamps: {
         createdAt: 'timestamp'

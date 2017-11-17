@@ -20,7 +20,7 @@ var PlaceSchema = new Schema({
         type: String,
         required: true
     },
-    titlePicture: {
+    titlePicture: { // TODO validate path when we know how it should look like
         type: String,
         default: getDefaultPicture
     },
@@ -41,13 +41,23 @@ var PlaceSchema = new Schema({
     },
     host: {
         type: ObjectId,
+        validate:{
+            validator: validator.isMongoId,
+            message: '{VALUE} is not a valid object id',
+            isAsync: false
+        },
         required: true
     },
     qrCode: {
         type: String
     },
     components: {
-        type: [ObjectId]
+        type: [ObjectId],
+        validate:{
+            validator: validator.isMongoId,
+            message: '{VALUE} is not a valid object id',
+            isAsync: false
+        }
     },
     settings: {
         visitorPhotos: { // are visitors allowed to upload photos to this place?

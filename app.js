@@ -10,6 +10,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var debug = require('debug');
 var morgan = require('morgan');
+var validator = require('validator');
 
 //own modules/routes
 var restAPIchecks = require('./restapi/request-checks');
