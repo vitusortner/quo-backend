@@ -8,9 +8,8 @@
 
 // modules
 var mongoose = require('mongoose');
-var ObjectId = mongoose.Schema.Types.ObjectId;
-
 var Schema = mongoose.Schema;
+var ObjectId = Schema.Types.ObjectId;
 
 var PictureSchema = new Schema({
     src: {

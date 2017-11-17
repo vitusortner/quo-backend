@@ -9,6 +9,7 @@
 // modules
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var ObjectId = Schema.Types.ObjectId;
 
 var UserSchema = new Schema({
     email: {
@@ -21,7 +22,7 @@ var UserSchema = new Schema({
         required: true
     },
     visitedPlaces: {
-        type: [mongoose.Schema.Types.ObjectId]
+        type: [ObjectId]
     },
     notificationSettings: {
         updatedContent: {
@@ -32,6 +33,10 @@ var UserSchema = new Schema({
             type: Boolean,
             default: true
         }
+    },
+    active: {
+        type: Boolean,
+        default: true
     }},{
     timestamps: {
         createdAt: 'timestamp'
