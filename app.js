@@ -6,21 +6,17 @@
 */
 "use strict";
 
-var express = require('express');
-var bodyParser = require('body-parser');
-var debug = require('debug');
-var morgan = require('morgan');
+var express = require('express'),
+    bodyParser = require('body-parser'),
+    debug = require('debug'),
+    morgan = require('morgan'),
+    mongoose = require('mongoose'),
+    restful = require('node-restful');
 
 //own modules/routes
 var restAPIchecks = require('./restapi/request-checks');
 var errorResponseWare = require('./restapi/error-response');
 var HttpError = require('./restapi/http-error');
-
-var user = require('./routes/users');
-var picture = require('./routes/pictures');
-var place = require('./routes/places');
-var component = require('./routes/components');
-
 
 // app creation
 var app = express();
@@ -35,10 +31,30 @@ app.use(morgan('dev'));
 app.use(restAPIchecks);
 
 // Routes
-app.use('/users',user);
-app.use('/places',place);
-app.use('/pictures',picture);
-app.use('/components',component);
+mongoose.connect('mongodb://localhost:27017/quo');
+
+var UserSchema = require('./models/user'),
+    PictureSchema =  require('./models/picture'),
+    ComponentSchema = require('./models/component'),
+    PlaceSchema = require('./models/place');
+
+var user = restful.model('users',UserSchema)
+    .methods(['get', 'post', 'put', 'delete']);
+
+var picture = restful.model('pictures',PictureSchema)
+    .methods(['get', 'post', 'put', 'delete']);
+
+var component =  restful.model('components',ComponentSchema)
+    .methods(['get', 'post', 'put', 'delete']);
+
+var place =  restful.model('places',PlaceSchema)
+    .methods(['get', 'post', 'put', 'delete']);
+
+user.register(app, '/users');
+picture.register(app, '/pictures');
+component.register(app, '/components' );
+place.register(app, '/places');
+
 
 // (from express-generator boilerplate  standard code)
 // Errorhandling and requests without proper URLs ************************
