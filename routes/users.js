@@ -27,5 +27,4 @@ users.route('/')
         next(err);
     });
 
-
 module.exports = users;

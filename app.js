@@ -11,6 +11,7 @@ var express = require('express'),
     debug = require('debug'),
     morgan = require('morgan'),
     mongoose = require('mongoose'),
+    bcrypt = require('bcrypt-nodejs'),
     restful = require('node-restful');
 
 //own modules/routes
