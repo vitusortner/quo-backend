@@ -15,6 +15,8 @@ var ObjectId = Schema.Types.ObjectId;
 var UserSchema = new Schema({
     email: {
         type: String,
+        lowercase: true,
+        unique: true,
         required: true
     },
     password: {

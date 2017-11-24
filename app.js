@@ -12,6 +12,7 @@ var express = require('express'),
     morgan = require('morgan'),
     mongoose = require('mongoose'),
     bcrypt = require('bcrypt-nodejs'),
+    config = require('./config/main'),
     restful = require('node-restful');
 
 //own modules/routes
@@ -32,7 +33,7 @@ app.use(morgan('dev'));
 app.use(restAPIchecks);
 
 // Routes
-mongoose.connect('mongodb://localhost:27017/quo');
+mongoose.connect(config.database);
 
 var UserSchema = require('./models/user'),
     PictureSchema =  require('./models/picture'),
@@ -70,7 +71,7 @@ app.use(function(req, res, next) {
 errorResponseWare(app);
 
 // Start server ****************************
-app.listen(3000, function(err) {
+app.listen(config.port, function(err) {
     if (err !== undefined) {
         console.log('Error on startup, ',err);
     }
