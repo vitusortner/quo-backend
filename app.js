@@ -57,6 +57,7 @@ picture.register(app, '/pictures');
 component.register(app, '/components' );
 place.register(app, '/places');
 
+const router = require('./router');
 
 // (from express-generator boilerplate  standard code)
 // Errorhandling and requests without proper URLs ************************
@@ -68,6 +69,7 @@ app.use(function(req, res, next) {
 });
 
 // register error handlers
+router(app);
 errorResponseWare(app);
 
 // Start server ****************************
