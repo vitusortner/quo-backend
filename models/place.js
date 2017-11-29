@@ -40,8 +40,8 @@ var PlaceSchema = new Schema({
         default: getDefaultPicture
     },
     start: {
-      type: Date,
-      default: Date.now()
+        type: Date,
+        required: true
     },
     end: {
       type: Date
