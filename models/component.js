@@ -9,7 +9,6 @@
 // modules
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var ObjectId = Schema.Types.ObjectId;
 
 var ComponentSchema = new Schema({
     position: {

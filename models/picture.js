@@ -9,7 +9,6 @@
 // modules
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var ObjectId = Schema.Types.ObjectId;
 
 var PictureSchema = new Schema({
     src: {
@@ -17,11 +16,11 @@ var PictureSchema = new Schema({
         required: true
     },
     place: {
-        type: ObjectId,
+        type: String,
         required: true
     },
     owner: {
-        type: ObjectId,
+        type: String,
         required: true
     },
     is_visible: {

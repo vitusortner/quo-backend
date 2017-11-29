@@ -6,6 +6,7 @@
     "express": "^4.15.3",
     "mongoose": "^4.10.8",
     "morgan": "^1.8.2",
+    "node-restful": "^0.2.6",
     "validator": "^9.1.1"
   },
   "keywords": [

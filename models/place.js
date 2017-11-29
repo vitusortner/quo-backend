@@ -9,26 +9,17 @@
 // modules
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var ObjectId = Schema.Types.ObjectId;
 var bcrypt = require('bcrypt-nodejs');
 
-function getDefaultPicture() {
+exports.getDefaultPicture = function() {
     // TODO function for returning a random default picture
     return "path";
-}
+};
 
-function generateQrCodeId(){
-    const SALT_FACTOR = 5;
+exports.generateQrCodeId = function(){
+    return bcrypt.hashSync(Date.now());
+};
 
-    bcrypt.genSalt(SALT_FACTOR, function(err, salt) {
-        if (err) return err;
-
-        bcrypt.hash(Date.now(), salt, null, function(err, hash) {
-            if (err) return err;
-            return hash;
-        });
-    });
-}
 
 var PlaceSchema = new Schema({
     title: {
@@ -37,11 +28,11 @@ var PlaceSchema = new Schema({
     },
     title_picture: {
         type: String,
-        default: getDefaultPicture
+        default: this.getDefaultPicture()
     },
     start: {
         type: Date,
-        required: true
+        default: Date.now()
     },
     end: {
       type: Date
@@ -66,18 +57,18 @@ var PlaceSchema = new Schema({
       }
     },
     host: {
-        type: ObjectId,
+        type: String,
         required: true
     },
     qr_code_id: {
         type: String,
-        default: generateQrCodeId
+        default: this.generateQrCodeId()
     },
     qr_code: {
         type: String
     },
     components: {
-        type: [ObjectId]
+        type: [String]
     },
     settings: {
         isPhotoUploadAllowed: { // are visitors allowed to upload photos to this place?

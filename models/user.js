@@ -9,7 +9,6 @@
 // modules
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var ObjectId = Schema.Types.ObjectId;
 
 var UserSchema = new Schema({
     email: {
@@ -22,7 +21,7 @@ var UserSchema = new Schema({
         required: true
     },
     visitedPlaces: {
-        type: [ObjectId]
+        type: [String]
     },
     active: {
         type: Boolean,
