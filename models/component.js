@@ -12,11 +12,6 @@ var Schema = mongoose.Schema;
 var ObjectId = Schema.Types.ObjectId;
 
 var ComponentSchema = new Schema({
-    type: {
-        type: String,
-        enum: ['Text', 'Picture'],
-        required: true
-    },
     position: {
         type: Number,
         required: true
@@ -25,7 +20,7 @@ var ComponentSchema = new Schema({
         type: String
     },
     picture: {
-        type: ObjectId
+        type: String
     } },{
     timestamps: {
         createdAt: 'timestamp'

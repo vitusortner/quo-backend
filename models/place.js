@@ -10,9 +10,24 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var ObjectId = Schema.Types.ObjectId;
+var bcrypt = require('bcrypt-nodejs');
 
 function getDefaultPicture() {
     // TODO function for returning a random default picture
+    return "path";
+}
+
+function generateQrCodeId(){
+    const SALT_FACTOR = 5;
+
+    bcrypt.genSalt(SALT_FACTOR, function(err, salt) {
+        if (err) return err;
+
+        bcrypt.hash(Date.now(), salt, null, function(err, hash) {
+            if (err) return err;
+            return hash;
+        });
+    });
 }
 
 var PlaceSchema = new Schema({
@@ -20,7 +35,7 @@ var PlaceSchema = new Schema({
         type: String,
         required: true
     },
-    titlePicture: {
+    title_picture: {
         type: String,
         default: getDefaultPicture
     },
@@ -32,29 +47,44 @@ var PlaceSchema = new Schema({
       type: Date
     },
     lat: {
-        type: String,
+        type: Number,
         required: true
     },
     long: {
-        type: String,
+        type: Number,
         required: true
+    },
+    address: {
+      street: { // street and number
+          type: String
+      },
+      city: {
+          type: String
+      },
+      zip_code: {
+          type: Number
+      }
     },
     host: {
         type: ObjectId,
         required: true
     },
-    qrCode: {
+    qr_code_id: {
+        type: String,
+        default: generateQrCodeId
+    },
+    qr_code: {
         type: String
     },
     components: {
         type: [ObjectId]
     },
     settings: {
-        visitorPhotos: { // are visitors allowed to upload photos to this place?
+        isPhotoUploadAllowed: { // are visitors allowed to upload photos to this place?
             type: Boolean,
             default: true
         },
-        validateGPS: { // visitors must verify their location to get access
+        hasToValidateGPS: { // visitors must verify their location to get access
             type: Boolean,
             default: true
         }

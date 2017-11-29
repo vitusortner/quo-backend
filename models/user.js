@@ -24,16 +24,6 @@ var UserSchema = new Schema({
     visitedPlaces: {
         type: [ObjectId]
     },
-    notificationSettings: {
-        updatedContent: {
-            type: Boolean,
-            default: true
-        },
-        newPhotos: {
-            type: Boolean,
-            default: true
-        }
-    },
     active: {
         type: Boolean,
         default: true

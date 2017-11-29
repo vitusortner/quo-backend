@@ -24,7 +24,7 @@ var PictureSchema = new Schema({
         type: ObjectId,
         required: true
     },
-    visible: {
+    is_visible: {
         type: Boolean,
         default: true
     } },{
