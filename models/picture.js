@@ -34,4 +34,4 @@ var PictureSchema = new Schema({
 });
 
 
-module.exports = mongoose.model('Picture', PictureSchema);
+module.exports = PictureSchema;
