@@ -39,4 +39,4 @@ var ComponentSchema = new Schema({
 });
 
 
-module.exports = mongoose.model('Component', ComponentSchema);
+module.exports = ComponentSchema;
