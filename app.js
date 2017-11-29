@@ -6,10 +6,12 @@
 */
 "use strict";
 
+var express = require('express');
+var bodyParser = require('body-parser');
+var debug = require('debug');
+var morgan = require('morgan');
+var validator = require('validator');
 var express = require('express'),
-    bodyParser = require('body-parser'),
-    debug = require('debug'),
-    morgan = require('morgan'),
     mongoose = require('mongoose'),
     restful = require('node-restful');
 
@@ -17,6 +19,12 @@ var express = require('express'),
 var restAPIchecks = require('./restapi/request-checks');
 var errorResponseWare = require('./restapi/error-response');
 var HttpError = require('./restapi/http-error');
+
+var user = require('./routes/users');
+var picture = require('./routes/pictures');
+var place = require('./routes/places');
+var component = require('./routes/components');
+
 
 // app creation
 var app = express();

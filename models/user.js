@@ -10,19 +10,35 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var ObjectId = Schema.Types.ObjectId;
+var validator = require('validator');
+
 
 var UserSchema = new Schema({
     email: {
         type: String,
+        validate:{
+            validator: validator.isEmail,
+            message: '{VALUE} is not a valid email',
+            isAsync: false
+        },
         required: true
     },
-    password: {
+    password: { // validation
         type: String,
         minlength: 8,
         required: true
     },
     visitedPlaces: {
-        type: [ObjectId]
+        type: [ObjectId],
+        validate:{ // TODO check if this validation really works
+            validator: function(values){
+                values.forEach(function(value){
+                    if(!validator.isMongoId(value)) return false
+                })
+            },
+            message: '{VALUE} does not contain only valid object IDs',
+            isAsync: false
+        }
     },
     notificationSettings: {
         updatedContent: {
