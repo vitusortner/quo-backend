@@ -10,6 +10,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var ObjectId = Schema.Types.ObjectId;
+var validator = require('validator');
 
 var PictureSchema = new Schema({
     src: { // TODO validate path when we know how it should look like

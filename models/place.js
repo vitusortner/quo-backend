@@ -10,6 +10,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var ObjectId = Schema.Types.ObjectId;
+var validator = require('validator');
 
 function getDefaultPicture() {
     // TODO function for returning a random default picture
