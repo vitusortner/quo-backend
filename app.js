@@ -22,7 +22,7 @@ var HttpError = require('./restapi/http-error');
 
 var user = require('./routes/users');
 var picture = require('./routes/pictures');
-var place = require('./routes/places');
+var places = require('./routes/places');
 var component = require('./routes/components');
 
 
@@ -41,33 +41,35 @@ app.use(restAPIchecks);
 // Routes
 mongoose.connect('mongodb://localhost:27017/quo');
 
+app.use('/places', places);
+
 var UserSchema = require('./models/user'),
-    PictureSchema =  require('./models/picture'),
+    PictureSchema = require('./models/picture'),
     ComponentSchema = require('./models/component'),
     PlaceSchema = require('./models/place');
 
-var user = restful.model('users',UserSchema)
+var user = restful.model('users', UserSchema)
     .methods(['get', 'post', 'put', 'delete']);
 
-var picture = restful.model('pictures',PictureSchema)
+var picture = restful.model('pictures', PictureSchema)
     .methods(['get', 'post', 'put', 'delete']);
 
-var component =  restful.model('components',ComponentSchema)
+var component = restful.model('components', ComponentSchema)
     .methods(['get', 'post', 'put', 'delete']);
 
-var place =  restful.model('places',PlaceSchema)
-    .methods(['get', 'post', 'put', 'delete']);
+// var place = restful.model('places', PlaceSchema)
+//     .methods(['get', 'post', 'put', 'delete']);
 
 user.register(app, '/users');
 picture.register(app, '/pictures');
-component.register(app, '/components' );
-place.register(app, '/places');
+component.register(app, '/components');
+// place.register(app, '/places');
 
 
 // (from express-generator boilerplate  standard code)
 // Errorhandling and requests without proper URLs ************************
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     console.log('Catching unmatched request to answer with 404');
     var err = new HttpError('Not Found', 404);
     next(err);
@@ -77,9 +79,9 @@ app.use(function(req, res, next) {
 errorResponseWare(app);
 
 // Start server ****************************
-app.listen(3000, function(err) {
+app.listen(3000, function (err) {
     if (err !== undefined) {
-        console.log('Error on startup, ',err);
+        console.log('Error on startup, ', err);
     }
     else {
         console.log('Listening on port 3000');
