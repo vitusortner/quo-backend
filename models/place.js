@@ -10,6 +10,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var ObjectId = Schema.Types.ObjectId;
+var validator = require('validator');
 
 function getDefaultPicture() {
     // TODO function for returning a random default picture
@@ -20,9 +21,9 @@ var PlaceSchema = new Schema({
         type: String,
         required: true
     },
-    titlePicture: {
+    titlePicture: { // TODO validate path when we know how it should look like
         type: String,
-        default: getDefaultPicture
+        default: "defaultpath"
     },
     start: {
       type: Date,
@@ -40,14 +41,14 @@ var PlaceSchema = new Schema({
         required: true
     },
     host: {
-        type: ObjectId,
+        type: String,
         required: true
     },
     qrCode: {
         type: String
     },
     components: {
-        type: [ObjectId]
+        type: [String]
     },
     settings: {
         visitorPhotos: { // are visitors allowed to upload photos to this place?
@@ -64,5 +65,5 @@ var PlaceSchema = new Schema({
     }
 });
 
-
+// module.exports = mongoose.model('Place', PlaceSchema);
 module.exports = PlaceSchema;

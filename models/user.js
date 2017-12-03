@@ -11,12 +11,19 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var bcrypt = require('bcrypt-nodejs');
 var ObjectId = Schema.Types.ObjectId;
+var validator = require('validator');
+
 
 var UserSchema = new Schema({
     email: {
         type: String,
         lowercase: true,
         unique: true,
+        validate:{
+            validator: validator.isEmail,
+            message: '{VALUE} is not a valid email',
+            isAsync: false
+        },
         required: true
     },
     password: {
