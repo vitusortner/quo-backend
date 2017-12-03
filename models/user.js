@@ -10,7 +10,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var bcrypt = require('bcrypt-nodejs');
-var ObjectId = Schema.Types.ObjectId;
 var validator = require('validator');
 
 
@@ -31,18 +30,8 @@ var UserSchema = new Schema({
         minlength: 8,
         required: true
     },
-    visitedPlaces: {
-        type: [ObjectId]
-    },
-    notificationSettings: {
-        updatedContent: {
-            type: Boolean,
-            default: true
-        },
-        newPhotos: {
-            type: Boolean,
-            default: true
-        }
+    visited_places: {
+        type: [String]
     },
     active: {
         type: Boolean,

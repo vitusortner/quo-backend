@@ -9,33 +9,22 @@
 // modules
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var ObjectId = Schema.Types.ObjectId;
 var validator = require('validator');
 
 var PictureSchema = new Schema({
-    src: { // TODO validate path when we know how it should look like
+    src: {
         type: String,
         required: true
     },
     place: {
-        type: ObjectId,
-        validate:{
-            validator: validator.isMongoId,
-            message: '{VALUE} is not a valid object id',
-            isAsync: false
-        },
+        type: String,
         required: true
     },
     owner: {
-        type: ObjectId,
-        validate:{
-            validator: validator.isMongoId,
-            message: '{VALUE} is not a valid object id',
-            isAsync: false
-        },
+        type: String,
         required: true
     },
-    visible: {
+    is_visible: {
         type: Boolean,
         default: true
     } },{
