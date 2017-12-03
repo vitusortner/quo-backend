@@ -20,7 +20,7 @@ var UserSchema = new Schema({
         minlength: 8,
         required: true
     },
-    visitedPlaces: {
+    visited_places: {
         type: [String]
     },
     active: {

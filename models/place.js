@@ -71,11 +71,11 @@ var PlaceSchema = new Schema({
         type: [String]
     },
     settings: {
-        isPhotoUploadAllowed: { // are visitors allowed to upload photos to this place?
+        is_photo_upload_allowed: { // are visitors allowed to upload photos to this place?
             type: Boolean,
             default: true
         },
-        hasToValidateGPS: { // visitors must verify their location to get access
+        has_to_validate_gps: { // visitors must verify their location to get access
             type: Boolean,
             default: true
         }
