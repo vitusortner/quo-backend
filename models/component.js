@@ -9,7 +9,6 @@
 // modules
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var ObjectId = Schema.Types.ObjectId;
 var validator = require('validator');
 
 var ComponentSchema = new Schema({
@@ -21,12 +20,7 @@ var ComponentSchema = new Schema({
         type: String
     },
     picture: {
-        type: ObjectId,
-        validate:{
-            validator: validator.isMongoId,
-            message: '{VALUE} is not a valid object id',
-            isAsync: false
-        }
+        type: String
     } },{
     timestamps: {
         createdAt: 'timestamp'

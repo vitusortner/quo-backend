@@ -41,7 +41,7 @@ app.use(restAPIchecks);
 // Routes
 mongoose.connect('mongodb://localhost:27017/quo');
 
-app.use('/places', places);
+// app.use('/places', places);
 
 var UserSchema = require('./models/user'),
     PictureSchema = require('./models/picture'),
@@ -57,13 +57,32 @@ var picture = restful.model('pictures', PictureSchema)
 var component = restful.model('components', ComponentSchema)
     .methods(['get', 'post', 'put', 'delete']);
 
-// var place = restful.model('places', PlaceSchema)
-//     .methods(['get', 'post', 'put', 'delete']);
+var place = restful.model('places', PlaceSchema)
+   .methods(['post', 'put', 'delete'])
+    //to use with /places
+    .route('get',function(req, res, next) {
+        place.find({}, function (err, items) {
+            res.locals.items = items; //all items from array are saved locally to be shown
+            res.locals.processed = true; //being used for HttpError
+            res.json(res.locals.items);
+            delete res.locals.items;
+        })
+    })
+    //to use with /places/:id/detail
+    .route('detail', {
+        detail: true,
+        handler: function(req, res, next) {
+        place.findOne({
+                _id: req.params.id
+            }, function(err, item) {
+                res.json(item);
+        })
+    }});
 
 user.register(app, '/users');
 picture.register(app, '/pictures');
 component.register(app, '/components');
-// place.register(app, '/places');
+place.register(app, '/places');
 
 
 // (from express-generator boilerplate  standard code)

@@ -9,53 +9,74 @@
 // modules
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var ObjectId = Schema.Types.ObjectId;
+var bcrypt = require('bcrypt-nodejs');
 var validator = require('validator');
 
-function getDefaultPicture() {
+exports.getDefaultPicture = function() {
     // TODO function for returning a random default picture
-}
+    return "path";
+};
+
+exports.generateQrCodeId = function(){
+    return bcrypt.hashSync(Date.now());
+};
+
 
 var PlaceSchema = new Schema({
     title: {
         type: String,
         required: true
     },
-    titlePicture: { // TODO validate path when we know how it should look like
+    title_picture: {
         type: String,
-        default: "defaultpath"
+        default: this.getDefaultPicture()
     },
     start: {
-      type: Date,
-      default: Date.now()
+        type: Date,
+        default: Date.now()
     },
     end: {
-      type: Date
+        type: Date
     },
     lat: {
-        type: String,
+        type: Number,
         required: true
     },
     long: {
-        type: String,
+        type: Number,
         required: true
+    },
+    address: {
+      street: { // street and number
+          type: String
+      },
+      city: {
+          type: String
+      },
+      zip_code: {
+          type: Number
+      }
     },
     host: {
         type: String,
         required: true
     },
-    qrCode: {
+    qr_code_id: {
+        type: String,
+        default: this.generateQrCodeId()
+    },
+    qr_code: {
         type: String
     },
     components: {
         type: [String]
     },
     settings: {
-        visitorPhotos: { // are visitors allowed to upload photos to this place?
+        is_photo_upload_allowed: { // are visitors allowed to upload photos to this place?
             type: Boolean,
             default: true
         },
-        validateGPS: { // visitors must verify their location to get access
+        has_to_validate_gps: { // visitors must verify their location to get access
             type: Boolean,
             default: true
         }
@@ -65,5 +86,5 @@ var PlaceSchema = new Schema({
     }
 });
 
-module.exports = mongoose.model('Place', PlaceSchema);
-// module.exports = PlaceSchema;
+
+module.exports = PlaceSchema;
