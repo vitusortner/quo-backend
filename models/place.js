@@ -10,6 +10,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var bcrypt = require('bcrypt-nodejs');
+var validator = require('validator');
 
 exports.getDefaultPicture = function() {
     // TODO function for returning a random default picture
@@ -35,7 +36,7 @@ var PlaceSchema = new Schema({
         default: Date.now()
     },
     end: {
-      type: Date
+        type: Date
     },
     lat: {
         type: Number,

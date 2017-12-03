@@ -9,10 +9,17 @@
 // modules
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var validator = require('validator');
+
 
 var UserSchema = new Schema({
     email: {
         type: String,
+        validate:{
+            validator: validator.isEmail,
+            message: '{VALUE} is not a valid email',
+            isAsync: false
+        },
         required: true
     },
     password: {
