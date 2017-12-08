@@ -86,5 +86,4 @@ var PlaceSchema = new Schema({
     }
 });
 
-
-module.exports = PlaceSchema;
+module.exports = mongoose.model('Place', PlaceSchema);
