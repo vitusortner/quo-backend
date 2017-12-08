@@ -59,15 +59,15 @@ places.route('/')
 
 places.route('/:id')
     .get(function (req, res, next) {
+        console.log("here");
 
         placeModel.findById(req.params.id).lean().exec(function (err, item) {
 
-            _.each(item.components, function (compid) {
-                componentModel.findById(compid, function (err, q) {
-                    sq.question = q;
-
-                });
-            });
+            // _.each(item.components, function (compid) {
+            //     componentModel.findById(compid, function (err, q) {
+            //         sq.question = q;
+            //     });
+            // });
         });
         console.log(item);
         res.locals.items = item; //return item is shown
