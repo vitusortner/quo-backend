@@ -12,8 +12,11 @@ var codes = require('../restapi/http-codes');
 var HttpError = require('../restapi/http-error.js');
 var placeModel = require('../models/place');
 var componentSchema = require('../models/component');
+var pictureSchema = require('../models/picture');
+
 var mongoose = require('mongoose');
 var componentModel = mongoose.model('Component', componentSchema);
+var pictureModel = mongoose.model('Picture', pictureSchema);
 
 var places = express.Router();
 
@@ -133,6 +136,29 @@ places.route('/:id/components')
                 next(err);
             } else {
                 res.locals.items = items.components;
+                res.locals.processed = true;
+                next();
+            }
+        })
+    })
+    .all(function(req, res, next) {
+        if (res.locals.processed) {
+            next();
+        } else {
+            // reply with wrong method code 405
+            var err = new HttpError('this method is not allowed at ' + req.originalUrl, codes.wrongmethod);
+            next(err);
+        }
+    });
+
+places.route('/:id/pictures')
+    .get(function(req, res,next) {
+        placeModel.findById(req.params.id).populate('pictures').exec(function(err, items) {
+            if (err) {
+                err = new HttpError(err, 400);
+                next(err);
+            } else {
+                res.locals.items = items.pictures;
                 res.locals.processed = true;
                 next();
             }

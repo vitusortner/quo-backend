@@ -63,6 +63,10 @@ var PlaceSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Component'
     }],
+    pictures: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Picture'
+    }],
     settings: {
         is_photo_upload_allowed: { // are visitors allowed to upload photos to this place?
             type: Boolean,
