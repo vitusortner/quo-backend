@@ -125,6 +125,29 @@ places.route('/:id')
         }
     });
 
+places.route('/:id/components')
+    .get(function(req, res,next) {
+        placeModel.findById(req.params.id).populate('components').exec(function(err, items) {
+            if (err) {
+                err = new HttpError(err, 400);
+                next(err);
+            } else {
+                res.locals.items = items.components;
+                res.locals.processed = true;
+                next();
+            }
+        })
+    })
+    .all(function(req, res, next) {
+        if (res.locals.processed) {
+            next();
+        } else {
+            // reply with wrong method code 405
+            var err = new HttpError('this method is not allowed at ' + req.originalUrl, codes.wrongmethod);
+            next(err);
+        }
+    });
+
 
 /**
  * This middleware would finally send any data that is in res.locals to the client (as JSON)

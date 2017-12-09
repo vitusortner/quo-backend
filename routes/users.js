@@ -11,8 +11,6 @@ var express = require('express');
 var codes = require('../restapi/http-codes');
 var HttpError = require('../restapi/http-error.js');
 var userModel = require('../models/user');
-var placeModel = require('../models/place');
-var mongoose = require('mongoose');
 
 var users = express.Router();
 
@@ -133,6 +131,15 @@ users.route('/:id/:some_places')
                 next();
             }
         })
+    })
+    .all(function(req, res, next) {
+        if (res.locals.processed) {
+            next();
+        } else {
+            // reply with wrong method code 405
+            var err = new HttpError('this method is not allowed at ' + req.originalUrl, codes.wrongmethod);
+            next(err);
+        }
     });
 
 users.route('/:id/hosted_places')
@@ -148,6 +155,15 @@ users.route('/:id/hosted_places')
                 next();
             }
         })
+    })
+    .all(function(req, res, next) {
+        if (res.locals.processed) {
+            next();
+        } else {
+            // reply with wrong method code 405
+            var err = new HttpError('this method is not allowed at ' + req.originalUrl, codes.wrongmethod);
+            next(err);
+        }
     });
 
 
