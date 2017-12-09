@@ -11,6 +11,8 @@ var express = require('express');
 var codes = require('../restapi/http-codes');
 var HttpError = require('../restapi/http-error.js');
 var userModel = require('../models/user');
+var placeModel = require('../models/place');
+var mongoose = require('mongoose');
 
 var users = express.Router();
 
@@ -28,6 +30,21 @@ users.route('/')
     .post(function (req, res, next) {
 
         var user = new userModel(req.body);
+        var visited_places_string = req.body.visited_places;
+        var visited_places_id = [];
+        visited_places_string.forEach(function(item){
+
+            // var place_object_string = new String(item);
+            // console.log();
+            // if (place_object_string instanceof String) console.log("This is a String");
+
+            var place_object_id = mongoose.Types.ObjectId(item);
+            // if (place_object_id instanceof mongoose.Types.ObjectId) console.log("Not a String");
+            visited_places_id.push(mongoose.Types.ObjectId(item));
+        });
+
+        user.visited_places = visited_places_id;
+        // console.log(user);
 
         user.save(function (err) {
             if (err) {
@@ -117,6 +134,21 @@ users.route('/:id')
             var err = new HttpError('this method is not allowed at ' + req.originalUrl, codes.wrongmethod);
             next(err);
         }
+    });
+
+users.route('/:id/visited_places')
+
+    .get(function(req, res,next) {
+        userModel.findById(req.params.id).populate('visited_places').exec(function(err, items) {
+            if (err) {
+                err = new HttpError(err, 400);
+                next(err);
+            } else {
+                res.locals.items = items.visited_places;
+                res.locals.processed = true;
+                next();
+            }
+        })
     });
 
 
