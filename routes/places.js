@@ -174,6 +174,32 @@ places.route('/:id/pictures')
         }
     });
 
+places.route('/qrcode/:id')
+
+    .get(function(req, res,next) {
+        placeModel.findOne({'qr_code_id': req.params.id}, function (err, item) {
+            if (err) {
+                err = new HttpError('item not found by id'+ req.params.id + 'at ' + req.originalUrl, codes.notfound);
+                next(err);
+            } else {
+                console.log(item);
+                res.locals.items = item; //return item is shown
+                res.locals.processed = true;
+                next();
+            }
+        });
+    })
+
+    .all(function(req, res, next) {
+        if (res.locals.processed) {
+            next();
+        } else {
+            // reply with wrong method code 405
+            var err = new HttpError('this method is not allowed at ' + req.originalUrl, codes.wrongmethod);
+            next(err);
+        }
+    });
+
 
 /**
  * This middleware would finally send any data that is in res.locals to the client (as JSON)

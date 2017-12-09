@@ -118,7 +118,7 @@ users.route('/:id')
         }
     });
 
-users.route('/:id/:some_places')
+users.route('/:id/:visited_places')
 
     .get(function(req, res,next) {
         userModel.findById(req.params.id).populate('visited_places').exec(function(err, items) {
