@@ -30,13 +30,6 @@ users.route('/')
     .post(function (req, res, next) {
 
         var user = new userModel(req.body);
-
-        // pretty sure it works without making string object id, but don't want to delete the code yet
-
-        // var visited_places = req.body.visited_places;
-        // visited_places.map(mongoose.Types.ObjectId);
-        // user.visited_places = visited_places;
-
         user.save(function (err) {
             if (err) {
                 return next(err);

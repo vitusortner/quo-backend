@@ -11,6 +11,9 @@ var express = require('express');
 var codes = require('../restapi/http-codes');
 var HttpError = require('../restapi/http-error.js');
 var placeModel = require('../models/place');
+var componentSchema = require('../models/component');
+var mongoose = require('mongoose');
+var componentModel = mongoose.model('Component', componentSchema);
 
 var places = express.Router();
 
@@ -66,7 +69,6 @@ places.route('/:id')
     })
 
     .put(function(req, res,next) {
-        console.log("Hi");
         var id = null;
         try { id = req.params.id }
         catch (e) {}
@@ -75,23 +77,27 @@ places.route('/:id')
             next(err);
             return;
         }
-
-        placeModel.findByIdAndRemove(req.params.id, function (err) {
+        placeModel.findByIdAndRemove(req.params.id, function (err, item) {
 
             if (err) {
                 err = new HttpError('item not found by id'+ req.params.id + 'at ' + req.originalUrl, codes.notfound);
                 next(err);
             } else {
-                var place = new placeModel(req.body);
-                place.save(function (err) {
-                    if (err) {
-                        return next(err);
-                    }
-                    res.locals.processed = true;
-                    res.locals.items = place;
-                    res.status(codes.success);
-                    next();
-                });
+                if (item.host !== req.body.host) {
+                    var err = new HttpError('host in db and host in request must be the same', codes.wrongrequest);
+                    next(err);
+                } else {
+                    var place = new placeModel(req.body);
+                    place.save(function (err) {
+                        if (err) {
+                            return next(err);
+                        }
+                        res.locals.processed = true;
+                        res.locals.items = place;
+                        res.status(codes.success);
+                        next();
+                    });
+                }
             }
         });
     })

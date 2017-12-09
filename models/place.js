@@ -68,9 +68,10 @@ var PlaceSchema = new Schema({
     qr_code: {
         type: String
     },
-    components: {
-        type: [String]
-    },
+    components: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Component'
+    }],
     settings: {
         is_photo_upload_allowed: { // are visitors allowed to upload photos to this place?
             type: Boolean,
