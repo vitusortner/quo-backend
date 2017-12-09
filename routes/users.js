@@ -37,7 +37,6 @@ users.route('/')
         // visited_places.map(mongoose.Types.ObjectId);
         // user.visited_places = visited_places;
 
-
         user.save(function (err) {
             if (err) {
                 return next(err);
@@ -128,7 +127,7 @@ users.route('/:id')
         }
     });
 
-users.route('/:id/visited_places')
+users.route('/:id/:some_places')
 
     .get(function(req, res,next) {
         userModel.findById(req.params.id).populate('visited_places').exec(function(err, items) {
@@ -137,6 +136,21 @@ users.route('/:id/visited_places')
                 next(err);
             } else {
                 res.locals.items = items.visited_places;
+                res.locals.processed = true;
+                next();
+            }
+        })
+    });
+
+users.route('/:id/hosted_places')
+
+    .get(function(req, res,next) {
+        userModel.findById(req.params.id).populate('hosted_places').exec(function(err, items) {
+            if (err) {
+                err = new HttpError(err, 400);
+                next(err);
+            } else {
+                res.locals.items = items.hosted_places;
                 res.locals.processed = true;
                 next();
             }

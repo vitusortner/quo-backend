@@ -31,6 +31,10 @@ var UserSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Place'
     }],
+    hosted_places: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Place'
+    }],
     active: {
         type: Boolean,
         default: true
