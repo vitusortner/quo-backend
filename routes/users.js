@@ -30,21 +30,13 @@ users.route('/')
     .post(function (req, res, next) {
 
         var user = new userModel(req.body);
-        var visited_places_string = req.body.visited_places;
-        var visited_places_id = [];
-        visited_places_string.forEach(function(item){
 
-            // var place_object_string = new String(item);
-            // console.log();
-            // if (place_object_string instanceof String) console.log("This is a String");
+        // pretty sure it works without making string object id, but don't want to delete the code yet
 
-            var place_object_id = mongoose.Types.ObjectId(item);
-            // if (place_object_id instanceof mongoose.Types.ObjectId) console.log("Not a String");
-            visited_places_id.push(mongoose.Types.ObjectId(item));
-        });
+        // var visited_places = req.body.visited_places;
+        // visited_places.map(mongoose.Types.ObjectId);
+        // user.visited_places = visited_places;
 
-        user.visited_places = visited_places_id;
-        // console.log(user);
 
         user.save(function (err) {
             if (err) {
