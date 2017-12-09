@@ -12,15 +12,6 @@ var Schema = mongoose.Schema;
 var bcrypt = require('bcrypt-nodejs');
 var validator = require('validator');
 
-exports.getDefaultPicture = function() {
-    // TODO function for returning a random default picture
-    return "path";
-};
-
-exports.generateQrCodeId = function(){
-    return bcrypt.hashSync(Date.now());
-};
-
 
 var PlaceSchema = new Schema({
     title: {
@@ -29,7 +20,7 @@ var PlaceSchema = new Schema({
     },
     title_picture: {
         type: String,
-        default: this.getDefaultPicture()
+        required: true
     },
     start: {
         type: Date,
@@ -63,7 +54,7 @@ var PlaceSchema = new Schema({
     },
     qr_code_id: {
         type: String,
-        default: this.generateQrCodeId()
+        required: true
     },
     qr_code: {
         type: String
