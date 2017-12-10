@@ -80,27 +80,15 @@ places.route('/:id')
             next(err);
             return;
         }
-        placeModel.findByIdAndRemove(req.params.id, function (err, item) {
-
+        placeModel.findByIdAndUpdate(req.params.id, req.body, {runValidators:true, new: true},(err, item) => {
             if (err) {
-                err = new HttpError('item not found by id'+ req.params.id + 'at ' + req.originalUrl, codes.notfound);
+                err = new HttpError(err.message, codes.wrongrequest);
                 next(err);
             } else {
-                if (item.host !== req.body.host) {
-                    var err = new HttpError('host in db and host in request must be the same', codes.wrongrequest);
-                    next(err);
-                } else {
-                    var place = new placeModel(req.body);
-                    place.save(function (err) {
-                        if (err) {
-                            return next(err);
-                        }
-                        res.locals.processed = true;
-                        res.locals.items = place;
-                        res.status(codes.success);
-                        next();
-                    });
-                }
+                res.locals.processed = true;
+                res.locals.items = item;
+                res.status(codes.success);
+                next();
             }
         });
     })

@@ -65,7 +65,6 @@ users.route('/:id')
     })
 
     .put(function(req, res,next) {
-        console.log("Hi");
         var id = null;
         try { id = req.params.id }
         catch (e) {}
@@ -75,24 +74,36 @@ users.route('/:id')
             return;
         }
 
-        userModel.findByIdAndRemove(req.params.id, function (err) {
-
+        userModel.findByIdAndUpdate(req.params.id, req.body, {runValidators:true, new: true},(err, item) => {
             if (err) {
-                err = new HttpError('item not found by id'+ req.params.id + 'at ' + req.originalUrl, codes.notfound);
+                err = new HttpError(err.message, codes.wrongrequest);
                 next(err);
             } else {
-                var user = new userModel(req.body);
-                user.save(function (err) {
-                    if (err) {
-                        return next(err);
-                    }
-                    res.locals.processed = true;
-                    res.locals.items = user;
-                    res.status(codes.success);
-                    next();
-                });
+                res.locals.processed = true;
+                res.locals.items = item;
+                res.status(codes.success);
+                next();
             }
         });
+
+        // userModel.findByIdAndRemove(req.params.id, function (err) {
+        //
+        //     if (err) {
+        //         err = new HttpError('item not found by id'+ req.params.id + 'at ' + req.originalUrl, codes.notfound);
+        //         next(err);
+        //     } else {
+        //         var user = new userModel(req.body);
+        //         user.save(function (err) {
+        //             if (err) {
+        //                 return next(err);
+        //             }
+        //             res.locals.processed = true;
+        //             res.locals.items = user;
+        //             res.status(codes.success);
+        //             next();
+        //         });
+        //     }
+        // });
     })
 
     .delete(function(req,res,next) {
