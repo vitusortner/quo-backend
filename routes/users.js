@@ -54,7 +54,7 @@ users.route('/:id')
     .get(function(req, res,next) {
         userModel.findById(req.params.id, function (err, items) {
             if (err) {
-                err = new HttpError('item not found by id'+ req.params.id + 'at ' + req.originalUrl, codes.notfound);
+                err = new HttpError(err.message, codes.wrongrequest);
                 next(err);
             } else {
                 res.locals.items = items; //return item is shown
@@ -65,11 +65,9 @@ users.route('/:id')
     })
 
     .put(function(req, res,next) {
-        var id = null;
-        try { id = req.params.id }
-        catch (e) {}
-        if (id !== req.body._id) {
-            var err = new HttpError('id of PUT resource and send JSON body are not equal ' + req.params.id + " " + req.body.id, codes.wrongrequest);
+
+        if (req.params.id !== req.body._id) {
+            var err = new HttpError('id of PUT resource and send JSON body are not equal: ' + req.params.id + " " + req.body.id, codes.wrongrequest);
             next(err);
             return;
         }
@@ -85,31 +83,12 @@ users.route('/:id')
                 next();
             }
         });
-
-        // userModel.findByIdAndRemove(req.params.id, function (err) {
-        //
-        //     if (err) {
-        //         err = new HttpError('item not found by id'+ req.params.id + 'at ' + req.originalUrl, codes.notfound);
-        //         next(err);
-        //     } else {
-        //         var user = new userModel(req.body);
-        //         user.save(function (err) {
-        //             if (err) {
-        //                 return next(err);
-        //             }
-        //             res.locals.processed = true;
-        //             res.locals.items = user;
-        //             res.status(codes.success);
-        //             next();
-        //         });
-        //     }
-        // });
     })
 
     .delete(function(req,res,next) {
         userModel.findByIdAndRemove(req.params.id, function (err) {
             if (err){
-                err = new HttpError('item not found by id'+ req.params.id + 'at ' + req.originalUrl, codes.notfound);
+                err = new HttpError(err.message, codes.wrongrequest);
                 next(err);
             } else {
                 res.status(codes.success);

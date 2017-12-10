@@ -72,14 +72,13 @@ places.route('/:id')
     })
 
     .put(function(req, res,next) {
-        var id = null;
-        try { id = req.params.id }
-        catch (e) {}
-        if (id !== req.body._id) {
-            var err = new HttpError('id of PUT resource and send JSON body are not equal ' + req.params.id + " " + req.body.id, codes.wrongrequest);
+
+        if (req.params.id !== req.body._id) {
+            var err = new HttpError('id of PUT resource and send JSON body are not equal: ' + req.params.id + " " + req.body.id, codes.wrongrequest);
             next(err);
             return;
         }
+
         placeModel.findByIdAndUpdate(req.params.id, req.body, {runValidators:true, new: true},(err, item) => {
             if (err) {
                 err = new HttpError(err.message, codes.wrongrequest);
@@ -96,7 +95,7 @@ places.route('/:id')
     .delete(function(req,res,next) {
         placeModel.findByIdAndRemove(req.params.id, function (err) {
             if (err){
-                err = new HttpError('item not found by id'+ req.params.id + 'at ' + req.originalUrl, codes.notfound);
+                err = new HttpError(err.message, codes.wrongrequest);
                 next(err);
             } else {
                 res.status(codes.success);
@@ -120,7 +119,7 @@ places.route('/:id/components')
     .get(function(req, res,next) {
         placeModel.findById(req.params.id).populate('components').exec(function(err, items) {
             if (err) {
-                err = new HttpError(err, 400);
+                err = new HttpError(err.message, codes.wrongrequest);
                 next(err);
             } else {
                 res.locals.items = items.components;
@@ -143,7 +142,7 @@ places.route('/:id/pictures')
     .get(function(req, res,next) {
         placeModel.findById(req.params.id).populate('pictures').exec(function(err, items) {
             if (err) {
-                err = new HttpError(err, 400);
+                err = new HttpError(err.message, codes.wrongrequest);
                 next(err);
             } else {
                 res.locals.items = items.pictures;
@@ -167,7 +166,7 @@ places.route('/qrcode/:id')
     .get(function(req, res,next) {
         placeModel.findOne({'qr_code_id': req.params.id}, function (err, item) {
             if (err) {
-                err = new HttpError('item not found by id'+ req.params.id + 'at ' + req.originalUrl, codes.notfound);
+                err = new HttpError(err.message, codes.wrongrequest);
                 next(err);
             } else {
                 console.log(item);
