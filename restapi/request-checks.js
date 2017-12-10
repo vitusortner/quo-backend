@@ -31,7 +31,7 @@ router.use(function(req, res, next){
 });
 
 // request type application/json check
-router.use(function(req, res, next) {
+/*router.use(function(req, res, next) {
     if (['POST', 'PUT', 'PATCH'].indexOf(req.method) > -1 &&
         !( /application\/json/.test(req.get('Content-Type')) )) {
         // send error code 415: unsupported media type
@@ -44,7 +44,7 @@ router.use(function(req, res, next) {
     else {
         next(); // let this request pass through as it is OK
     }
-});
+});*/
 
 
 // request POST, PUT check that any content was send

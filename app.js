@@ -8,12 +8,14 @@
 
 var express = require('express');
 var bodyParser = require('body-parser');
+var busbuy = require('busboy');
 var debug = require('debug');
 var morgan = require('morgan');
 var validator = require('validator');
 var express = require('express'),
     mongoose = require('mongoose'),
     restful = require('node-restful');
+
 
 //own modules/routes
 var restAPIchecks = require('./restapi/request-checks');
@@ -24,6 +26,7 @@ var user = require('./routes/users');
 var picture = require('./routes/pictures');
 var places = require('./routes/places');
 var component = require('./routes/components');
+var upload = require('./routes/upload');
 
 
 // app creation
@@ -41,7 +44,7 @@ app.use(restAPIchecks);
 // Routes
 mongoose.connect('mongodb://localhost:27017/quo');
 
-// app.use('/places', places);
+app.use('/upload', upload);
 
 var UserSchema = require('./models/user'),
     PictureSchema = require('./models/picture'),
@@ -83,7 +86,6 @@ user.register(app, '/users');
 picture.register(app, '/pictures');
 component.register(app, '/components');
 place.register(app, '/places');
-
 
 // (from express-generator boilerplate  standard code)
 // Errorhandling and requests without proper URLs ************************

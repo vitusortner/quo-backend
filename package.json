@@ -1,7 +1,9 @@
 {
   "dependencies": {
+    "aws-sdk": "^2.167.0",
     "bcrypt-nodejs": "^0.0.3",
     "body-parser": "^1.17.2",
+    "busboy": "^0.2.14",
     "debug": "^2.6.8",
     "express": "^4.15.3",
     "mongoose": "^4.10.8",
