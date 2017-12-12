@@ -4,100 +4,94 @@
  *
  * @module routes/upload
  * @type {Router}
+ * @description send data as form-data with key imgUpload and the file as value.
  */
 
-
-// Load the AWS SDK for Node.js
-var AWS = require('aws-sdk');
+// modules
+var express = require('express'),
+    codes = require('../restapi/http-codes'),
+    HttpError = require('../restapi/http-error.js'),
+    multer = require('multer'),
+    multerS3 = require('multer-s3'),
+    fs = require('fs'),
+    AWS = require('aws-sdk'),
+    path = require('path');
 
 // Set the region
 AWS.config.update({region: 'eu-central-1'});
-
 //get creddentials from shared local file
 var credentials = new AWS.SharedIniFileCredentials();
 AWS.config.credentials = credentials;
-
-// Create S3 service object
-s3 = new AWS.S3({apiVersion: '2006-03-01'});
+var s3 = new AWS.S3();
 
 // call S3 to retrieve upload file to specified bucket
-var uploadParams = {Bucket: "quo-picutre-bucket", Key: '', Body: ''};
-
-
-// modules
-var express = require('express');
-var codes = require('../restapi/http-codes');
-var HttpError = require('../restapi/http-error.js');
-
-var mongoose = require('mongoose'); // object represents mongoose framework, possible to use all methods of mongoose
-var userModel = require('../models/picture'); //pin.js (Schema) saved as pinModel
+var uploadParams = {Bucket: "quo-picture-bucket", Key: '', Body: ''};
 
 var upload = express.Router();
 
 upload.route('/')
 
-    .get(function(req,res){
-        res.end("Node-File-Upload");
+    .post(function (req, res) {
 
-    })
-
-    .post(function(req, res) {
-        // console.log(req.files.image.originalFilename);
-        /*console.log(req.file);
-        fs.readFile(req.files.image.path, function (err, data){
-            var dirname = "/home/rajamalw/Node/file-upload";
-            var newPath = dirname + "/uploads/" + 	req.files.image.originalFilename;
-            fs.writeFile(newPath, data, function (err) {
-                if(err){
-                    res.json({'response':"Error"});
-                }else {
-                    res.json({'response':"Saved"});
-                }
-            });
-        });*/
-
-        if(req.files){
-            console.log("files")
-        }
-
-       //TODO get file
-        var file = req.file.path;
-
-        var fs = require('fs');
-        var fileStream = fs.createReadStream(file);
-        fileStream.on('error', function(err) {
-            console.log('File Error', err);
-        });
-        uploadParams.Body = fileStream;
-
-        var path = require('path');
-        uploadParams.Key = path.basename(file);
-
-        // call S3 to retrieve upload file to specified bucket
-        s3.upload (uploadParams, function (err, data) {
-            if (err) {
-                console.log("Error", err);
-            } if (data) {
-                console.log("Upload Success", data.Location);
+        //to save local in /images
+        /*var Storage = multer.diskStorage({
+            destination: function (req, file, callback) {
+                callback(null, "./images");
+            },
+            filename: function (req, file, callback) {
+                callback(null, file.fieldname + "_" + Date.now() + "_" + file.originalname);
             }
         });
+
+        var upload = multer({ storage: Storage }).single("imgUploader");*/
+
+        //to save in AWS S3
+        var upload = multer({
+            storage: multerS3({
+                s3: s3,
+                bucket: 'quo-picture-bucket',
+                contentType: multerS3.AUTO_CONTENT_TYPE,
+                metadata: function (req, file, cb) {
+                    cb(null, Object.assign({}, req.body));
+                },
+                key: function (req, file, cb) {
+                    cb(null, path.basename(file.originalname));
+                }
+            })
+        }).single("imgUpload");
+
+        upload(req, res, function (err) {
+            if (err) {
+                return res.end("Something went wrong! Error: "+ err);
+            }
+            return res.end("File uploaded sucessfully!.");
+        });
+
     })
 
-    .all(function(req, res, next) {
-    var err = new HttpError('this method is not allowed at ' + req.originalUrl, codes.wrongmethod);
-    next(err);
-});
-
-upload.route('/:file')
-    .get(function (req, res){
-        file = req.params.file;
-        var dirname = "/home/rajamalw/Node/file-upload";
-        var img = fs.readFileSync(dirname + "/uploads/" + file);
-        res.writeHead(200, {'Content-Type': 'image/jpg' });
-        res.end(img, 'binary');
+    .all(function (req, res, next) {
+        var err = new HttpError('this method is not allowed at ' + req.originalUrl, codes.wrongmethod);
+        next(err);
     });
 
-upload.use(function(req, res, next) {
+upload.route('/:file')
+    .get(function (req, res) {
+        var params = {
+            Bucket: "quo-picture-bucket",
+            Key: file
+        };
+
+        var item = req.body;
+        s3.getObject(params, function (err, data) {
+            if (err) {
+                return res.send({ "error": err });
+            }
+            res.send({ data });
+        });
+
+    });
+
+upload.use(function (req, res, next) {
     if (res.locals.items) {
         res.json(res.locals.items);
         delete res.locals.items;

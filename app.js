@@ -8,13 +8,13 @@
 
 var express = require('express');
 var bodyParser = require('body-parser');
-var busbuy = require('busboy');
 var debug = require('debug');
 var morgan = require('morgan');
 var validator = require('validator');
 var express = require('express'),
     mongoose = require('mongoose'),
-    restful = require('node-restful');
+    restful = require('node-restful'),
+    multer = require('multer');
 
 
 //own modules/routes
@@ -44,7 +44,15 @@ app.use(restAPIchecks);
 // Routes
 mongoose.connect('mongodb://localhost:27017/quo');
 
+
+
+app.get("/", function (req, res) {
+    res.sendFile(__dirname + "/index.html");
+});
+
+
 app.use('/upload', upload);
+
 
 var UserSchema = require('./models/user'),
     PictureSchema = require('./models/picture'),
