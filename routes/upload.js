@@ -13,7 +13,6 @@ var express = require('express'),
     HttpError = require('../restapi/http-error.js'),
     multer = require('multer'),
     multerS3 = require('multer-s3'),
-    fs = require('fs'),
     AWS = require('aws-sdk'),
     path = require('path');
 
@@ -24,14 +23,12 @@ var credentials = new AWS.SharedIniFileCredentials();
 AWS.config.credentials = credentials;
 var s3 = new AWS.S3();
 
-// call S3 to retrieve upload file to specified bucket
-var uploadParams = {Bucket: "quo-picture-bucket", Key: '', Body: ''};
 
 var upload = express.Router();
 
 upload.route('/')
 
-    .post(function (req, res) {
+    .post(function (req, res, next) {
 
         //to save local in /images
         /*var Storage = multer.diskStorage({
@@ -62,29 +59,34 @@ upload.route('/')
 
         upload(req, res, function (err) {
             if (err) {
-                return res.end("Something went wrong! Error: "+ err);
+                return next(err);
             }
-            return res.end("File uploaded sucessfully!.");
+            res.locals.processed = true;
+            res.locals.items = {"key":req.file.originalname};
+            res.status(codes.created);
+            next();
         });
-
     })
 
     .all(function (req, res, next) {
-        var err = new HttpError('this method is not allowed at ' + req.originalUrl, codes.wrongmethod);
-        next(err);
+        if (res.locals.processed) {
+            next();
+        } else {
+            var err = new HttpError('this method is not allowed at ' + req.originalUrl, codes.wrongmethod);
+            next(err);
+        }
     });
 
-upload.route('/:file')
-    .get(function (req, res) {
+upload.route('/:key')
+    .get(function (req, res, next) {
         var params = {
             Bucket: "quo-picture-bucket",
-            Key: file
+            Key: req.params.key
         };
 
-        var item = req.body;
         s3.getObject(params, function (err, data) {
             if (err) {
-                return res.send({ "error": err });
+                next(err);
             }
             res.send({ data });
         });
