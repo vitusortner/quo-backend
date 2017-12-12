@@ -16,6 +16,14 @@ var users = express.Router();
 
 users.route('/')
 
+    /**
+     * @api {get} /users Request all User information
+     * @apiName GetUsers
+     * @apiGroup User
+     *
+     * @apiSuccess {Object[]} users  List of all user Objects.
+     *
+     * */
     .get(function (req, res, next) {
         userModel.find({}, function (err, items) {
             console.log("here");
@@ -25,6 +33,20 @@ users.route('/')
         });
     })
 
+    /**
+     * @api {post} /users Create a new User
+     * @apiName PostUser
+     * @apiGroup User
+     *
+     * @apiParam {String} email  Required email of the User.
+     * @apiParam {String} password     Required password of the User.
+     * @apiParam {Obeject[]} [visited_places] Optional array with visited places.
+     * @apiParam {Obeject[]} [hosted_places] Optional array with hosted places.
+     * @apiParam {Boolean} [active=true]     Optional active status with default true.
+     *
+     * @apiSuccess {Object} users  User Objects that was created.
+     *
+     * */
     .post(function (req, res, next) {
 
         var user = new userModel(req.body);
@@ -51,6 +73,22 @@ users.route('/')
     });
 
 users.route('/:id')
+
+    /**
+     * @api {get} /users/:id Request User information
+     * @apiName GetUser
+     * @apiGroup User
+     *
+     * @apiParam {String} id  The Users-ID
+     *
+     * @apiSuccess {String} email  User Email
+     * @apiSuccess {String} password  Password from User
+     * @apiSuccess {Object[]} visited_places  All places visited
+     * @apiSuccess {Object[]} hosted_places  All places hosted
+     * @apiSuccess {Boolean} active   User Status
+     * @apiSuccess {Date} created  Creation Date
+     *
+     * */
     .get(function(req, res,next) {
         userModel.findById(req.params.id, function (err, items) {
             if (err) {
@@ -64,6 +102,17 @@ users.route('/:id')
         });
     })
 
+
+    /**
+     * @api {put} /users/:id Modify User information
+     * @apiName PutUser
+     * @apiGroup User
+     *
+     * @apiParam {String} id  The Users-ID
+     *
+     * @apiSuccess {Object} users  Modified user object
+     *
+     * */
     .put(function(req, res,next) {
 
         if (req.params.id !== req.body._id) {
@@ -85,6 +134,15 @@ users.route('/:id')
         });
     })
 
+
+    /**
+     * @api {delete} /users/:id Delete User Object
+     * @apiName DeleteUser
+     * @apiGroup User
+     *
+     * @apiParam {String} id  The Users-ID
+     *
+     * */
     .delete(function(req,res,next) {
         userModel.findByIdAndRemove(req.params.id, function (err) {
             if (err){
@@ -110,6 +168,16 @@ users.route('/:id')
 
 users.route('/:id/:visited_places')
 
+    /**
+     * @api {get} /users/:id/visited_places Get all visited Places
+     * @apiName GetUserVisitedPlaces
+     * @apiGroup User
+     *
+     * @apiParam {String} id  The Users-ID
+     *
+     * @apiSuccess {Object[]} places  Place objects the user visited
+     *
+     * */
     .get(function(req, res,next) {
         userModel.findById(req.params.id).populate('visited_places').exec(function(err, items) {
             if (err) {
@@ -134,6 +202,16 @@ users.route('/:id/:visited_places')
 
 users.route('/:id/hosted_places')
 
+    /**
+     * @api {get} /users/:id/hosted_places Get all hosted Places
+     * @apiName GetUserHostedPlaces
+     * @apiGroup User
+     *
+     * @apiParam {String} id  The Users-ID
+     *
+     * @apiSuccess {Object[]} places  Place objects the user hosted
+     *
+     * */
     .get(function(req, res,next) {
         userModel.findById(req.params.id).populate('hosted_places').exec(function(err, items) {
             if (err) {

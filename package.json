@@ -20,6 +20,7 @@
     "Florian Schlüter"
   ],
   "version": "1.0.0",
+  "description": "NodeJS rest-api for QUO App",
   "main": "app.js",
   "devDependencies": {
     "nodemon": "^1.11.0"
