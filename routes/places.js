@@ -11,6 +11,7 @@ var express = require('express');
 var codes = require('../restapi/http-codes');
 var HttpError = require('../restapi/http-error.js');
 var placeModel = require('../models/place');
+var userModel = require('../models/user');
 var componentSchema = require('../models/component');
 var pictureSchema = require('../models/picture');
 
@@ -24,7 +25,6 @@ places.route('/')
 
     .get(function (req, res, next) {
         placeModel.find({}, function (err, items) {
-            console.log("here");
             res.locals.items = items;
             res.locals.processed = true;
             next();
@@ -34,17 +34,40 @@ places.route('/')
     .post(function (req, res, next) {
 
         var place = new placeModel(req.body);
+        var host_id = req.body.host;
+        var error = false;
 
-        place.save(function (err) {
+        userModel.findById(host_id, function (err, user) {
             if (err) {
-                return next(err);
+                err = new HttpError(err.message, codes.wrongrequest);
+                next(err);
+            } else {
+                var hosted_array = user.hosted_places;
+                console.log(hosted_array);
+                hosted_array.push(host_id);
+                console.log(hosted_array);
+                userModel.findByIdAndUpdate(host_id, {$set: {hosted_places: hosted_array}}, { runValidators: true , new: true}, function (err, item) {
+                    if (err) {
+                        error = true;
+                        next(err);
+                    }
+                    console.log(item.hosted_places);
+                })
             }
-            res.locals.processed = true;
-
-            res.locals.items = place;
-            res.status(codes.created);
-            next();
         });
+
+        if(!error) {
+            place.save(function (err) {
+                if (err) {
+                    return next(err);
+                }
+                res.locals.processed = true;
+
+                res.locals.items = place;
+                res.status(codes.created);
+                next();
+            });
+        }
 
     })
 
