@@ -45,12 +45,6 @@ app.use(restAPIchecks);
 mongoose.connect('mongodb://localhost:27017/quo');
 
 
-
-app.get("/", function (req, res) {
-    res.sendFile(__dirname + "/index.html");
-});
-
-
 app.use('/upload', upload);
 
 
