@@ -22,6 +22,14 @@ var places = express.Router();
 
 places.route('/')
 
+    /**
+     * @api {get} /places Request all Place information's
+     * @apiName GetPlaces
+     * @apiGroup Place
+     *
+     * @apiSuccess {Object[]} places  List of all place Objects.
+     *
+     * */
     .get(function (req, res, next) {
         placeModel.find({}, function (err, items) {
             console.log("here");
@@ -31,6 +39,57 @@ places.route('/')
         });
     })
 
+    /**
+     * @api {post} /places Create a new Place
+     * @apiName PostPlace
+     * @apiGroup Place
+     *
+     * @apiParam {String}   title           Required title of the Place.
+     * @apiParam {String}   title_picture   ID of the title picture.
+     * @apiParam {Date}     [start=Now]     Optional start date.
+     * @apiParam {Date}     [end]           Optional end date.
+     * @apiParam {Number}   lat             Required latitude value.
+     * @apiParam {Number}   long            Required longitude value.
+     * @apiParam {Object}   [address]       Optional address object.
+     * @apiParam {String}   [address.street]    Optional address Street.
+     * @apiParam {String}   [address.city]      Optional address city.
+     * @apiParam {Number}   [address.zip_code]  Optional address zip code.
+     * @apiParam {String}   host            ID of the user who is host.
+     * @apiParam {String}   qr_code_id      ID that is saved in QR Code.
+     * @apiParam {String}   [qr_code]       Source String of the QR Code Image.
+     * @apiParam {Object[]} [components]    ID's from Components the place contains
+     * @apiParam {Object[]} [pictures]      ID's from pictures the place contains
+     * @apiParam {Object}   [settings]      Optional settings object
+     * @apiParam {Boolean}  [settings.is_photo_upload_allowd=true]     Are users allowed to upload images to the place gallery.
+     * @apiParam {Boolean}  [settings.has_to_validate_gps=true]        Are user required to be at the geological location of the place.
+     *
+     * @apiParamExample {json} Request-Example:
+     *{
+     *           "title":"Example Place",
+     *           "title_picture":"quo1A2B3C",
+     *           "start":"yyyy-MM-dd'T'HH:mm:ss'Z",
+     *           "end":"yyyy-MM-dd'T'HH:mm:ss'Z",
+     *           "lat":1234,
+     *           "long":4321,
+     *           "address":{
+     *               "street":"Example Street 42",
+     *               "city":"Examplecity",
+     *               "zip-code":"12345"
+     *           },
+     *           "host":"12345",
+     *           "qr_code_id":"9A8B7C6D5F",
+     *           "qr_code":"quo9Z8Y7X",
+     *           "components":["1a2b3c4d5e6f7g8h9i10j11k"],
+	 *           "pictures":["1a2b3c4d5e6f7g8h9i10j11k"],
+     *           "settings":{
+     *               "is_photo_upload_allowed":true,
+     *               "has_to_validate_gps":true
+     *           }
+     *  }
+     *
+     * @apiSuccess {Object} place  Place object that was created.
+     *
+     * */
     .post(function (req, res, next) {
 
         var place = new placeModel(req.body);
@@ -58,10 +117,21 @@ places.route('/')
     });
 
 places.route('/:id')
-    .get(function(req, res,next) {
+
+    /**
+     * @api {get} /places/:id Request place information's
+     * @apiName GetPlace
+     * @apiGroup Place
+     *
+     * @apiParam {String} id Unique Place-ID
+     *
+     * @apiSuccess {Object} place  Requested place Object.
+     *
+     * */
+    .get(function (req, res, next) {
         placeModel.findById(req.params.id, function (err, items) {
             if (err) {
-                err = new HttpError('item not found by id'+ req.params.id + 'at ' + req.originalUrl, codes.notfound);
+                err = new HttpError('item not found by id' + req.params.id + 'at ' + req.originalUrl, codes.notfound);
                 next(err);
             } else {
                 res.locals.items = items; //return item is shown
@@ -71,7 +141,60 @@ places.route('/:id')
         });
     })
 
-    .put(function(req, res,next) {
+
+    /**
+     * @api {put} /places/:id Modifiy a place
+     * @apiName PutPlace
+     * @apiGroup Place
+     *
+     * @apiParam {String}   id              Unique Place ID of the place you want to change
+     * @apiParam {String}   title           Required title of the Place.
+     * @apiParam {String}   title_picture   ID of the title picture.
+     * @apiParam {Date}     [start=Now]     Optional start date.
+     * @apiParam {Date}     [end]           Optional end date.
+     * @apiParam {Number}   lat             Required latitude value.
+     * @apiParam {Number}   long            Required longitude value.
+     * @apiParam {Object}   [address]       Optional address object.
+     * @apiParam {String}   [address.street]    Optional address Street.
+     * @apiParam {String}   [address.city]      Optional address city.
+     * @apiParam {Number}   [address.zip_code]  Optional address zip code.
+     * @apiParam {String}   host            ID of the user who is host.
+     * @apiParam {String}   qr_code_id      ID that is saved in QR Code.
+     * @apiParam {String}   [qr_code]       Source String of the QR Code Image.
+     * @apiParam {Object[]} [components]    ID's from Components the place contains
+     * @apiParam {Object[]} [pictures]      ID's from pictures the place contains
+     * @apiParam {Object}   [settings]      Optional settings object
+     * @apiParam {Boolean}  [settings.is_photo_upload_allowd=true]     Are users allowed to upload images to the place gallery.
+     * @apiParam {Boolean}  [settings.has_to_validate_gps=true]        Are user required to be at the geological location of the place.
+     *
+     * @apiParamExample {json} Request-Example:
+     *{
+     *           "title":"Other Place",
+     *           "title_picture":"quo1A2B3C",
+     *           "start":"yyyy-MM-dd'T'HH:mm:ss'Z",
+     *           "end":"yyyy-MM-dd'T'HH:mm:ss'Z",
+     *           "lat":4321,
+     *           "long":1234,
+     *           "address":{
+     *               "street":"Other Street 42",
+     *               "city":"Othercity",
+     *               "zip-code":"54321"
+     *           },
+     *           "host":"54321",
+     *           "qr_code_id":"9A8B7C6D5F",
+     *           "qr_code":"quo9Z8Y7X",
+     *           "components":["1a2b3c4d5e6f7g8h9i10j11k"],
+	 *           "pictures":["1a2b3c4d5e6f7g8h9i10j11k"],
+     *           "settings":{
+     *               "is_photo_upload_allowed":true,
+     *               "has_to_validate_gps":true
+     *           }
+     *  }
+     *
+     * @apiSuccess {Object} place  Place object that was changed.
+     *
+     * */
+    .put(function (req, res, next) {
 
         if (req.params.id !== req.body._id) {
             var err = new HttpError('id of PUT resource and send JSON body are not equal: ' + req.params.id + " " + req.body.id, codes.wrongrequest);
@@ -79,7 +202,7 @@ places.route('/:id')
             return;
         }
 
-        placeModel.findByIdAndUpdate(req.params.id, req.body, {runValidators:true, new: true},(err, item) => {
+        placeModel.findByIdAndUpdate(req.params.id, req.body, {runValidators: true, new: true}, (err, item) => {
             if (err) {
                 err = new HttpError(err.message, codes.wrongrequest);
                 next(err);
@@ -92,9 +215,17 @@ places.route('/:id')
         });
     })
 
-    .delete(function(req,res,next) {
+    /**
+     * @api {delete} /places/:id Delete place object
+     * @apiName DeletePlace
+     * @apiGroup Place
+     *
+     * @apiParam {String} id  Unique ID of the place you want to delete
+     *
+     * */
+    .delete(function (req, res, next) {
         placeModel.findByIdAndRemove(req.params.id, function (err) {
-            if (err){
+            if (err) {
                 err = new HttpError(err.message, codes.wrongrequest);
                 next(err);
             } else {
@@ -105,7 +236,7 @@ places.route('/:id')
         });
     })
 
-    .all(function(req, res, next) {
+    .all(function (req, res, next) {
         if (res.locals.processed) {
             next();
         } else {
@@ -116,8 +247,8 @@ places.route('/:id')
     });
 
 places.route('/:id/components')
-    .get(function(req, res,next) {
-        placeModel.findById(req.params.id).populate('components').exec(function(err, items) {
+    .get(function (req, res, next) {
+        placeModel.findById(req.params.id).populate('components').exec(function (err, items) {
             if (err) {
                 err = new HttpError(err.message, codes.wrongrequest);
                 next(err);
@@ -128,7 +259,7 @@ places.route('/:id/components')
             }
         })
     })
-    .all(function(req, res, next) {
+    .all(function (req, res, next) {
         if (res.locals.processed) {
             next();
         } else {
@@ -139,8 +270,8 @@ places.route('/:id/components')
     });
 
 places.route('/:id/pictures')
-    .get(function(req, res,next) {
-        placeModel.findById(req.params.id).populate('pictures').exec(function(err, items) {
+    .get(function (req, res, next) {
+        placeModel.findById(req.params.id).populate('pictures').exec(function (err, items) {
             if (err) {
                 err = new HttpError(err.message, codes.wrongrequest);
                 next(err);
@@ -151,7 +282,7 @@ places.route('/:id/pictures')
             }
         })
     })
-    .all(function(req, res, next) {
+    .all(function (req, res, next) {
         if (res.locals.processed) {
             next();
         } else {
@@ -163,7 +294,7 @@ places.route('/:id/pictures')
 
 places.route('/qrcode/:id')
 
-    .get(function(req, res,next) {
+    .get(function (req, res, next) {
         placeModel.findOne({'qr_code_id': req.params.id}, function (err, item) {
             if (err) {
                 err = new HttpError(err.message, codes.wrongrequest);
@@ -177,7 +308,7 @@ places.route('/qrcode/:id')
         });
     })
 
-    .all(function(req, res, next) {
+    .all(function (req, res, next) {
         if (res.locals.processed) {
             next();
         } else {
@@ -192,7 +323,7 @@ places.route('/qrcode/:id')
  * This middleware would finally send any data that is in res.locals to the client (as JSON)
  * or, if nothing left, will send a 204.
  */
-places.use(function(req, res, next){
+places.use(function (req, res, next) {
     if (res.locals.items) {
         res.json(res.locals.items);
         delete res.locals.items;

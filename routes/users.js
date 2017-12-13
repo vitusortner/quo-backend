@@ -39,12 +39,22 @@ users.route('/')
      * @apiGroup User
      *
      * @apiParam {String} email  Required email of the User.
-     * @apiParam {String} password     Required password of the User.
+     * @apiParam {String{8..}} password     Required password of the User.
      * @apiParam {Obeject[]} [visited_places] Optional array with visited places.
      * @apiParam {Obeject[]} [hosted_places] Optional array with hosted places.
      * @apiParam {Boolean} [active=true]     Optional active status with default true.
      *
-     * @apiSuccess {Object} users  User Objects that was created.
+     *
+     * @apiParamExample {json} Request-Example:
+     *  {
+     *      "email":"example@email.com",
+     *      "password":"password123",
+     *      "visited_places":[],
+     *      "hosted_places":[],
+     *      "avtive":true
+     *  }
+     *
+     * @apiSuccess {Object} users  User object that was created.
      *
      * */
     .post(function (req, res, next) {
@@ -109,6 +119,15 @@ users.route('/:id')
      * @apiGroup User
      *
      * @apiParam {String} id  The Users-ID
+     *
+     * @apiParamExample {json} Request-Example:
+     *  {
+     *      "email":"oter@email.com",
+     *      "password":"123password",
+     *      "visited_places":[12345678],
+     *      "hosted_places":[],
+     *      "avtive":false
+     *  }
      *
      * @apiSuccess {Object} users  Modified user object
      *
