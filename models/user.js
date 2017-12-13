@@ -27,9 +27,14 @@ var UserSchema = new Schema({
         minlength: 8,
         required: true
     },
-    visited_places: {
-        type: [String]
-    },
+    visited_places: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Place'
+    }],
+    hosted_places: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Place'
+    }],
     active: {
         type: Boolean,
         default: true
@@ -40,4 +45,4 @@ var UserSchema = new Schema({
 });
 
 
-module.exports = UserSchema;
+module.exports = mongoose.model('User', UserSchema);

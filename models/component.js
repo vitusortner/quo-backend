@@ -17,10 +17,12 @@ var ComponentSchema = new Schema({
         required: true
     },
     text: {
-        type: String
+        type: String,
+        default: null
     },
     picture: {
-        type: String
+        type: String,
+        default: null
     } },{
     timestamps: {
         createdAt: 'timestamp'

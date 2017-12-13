@@ -22,11 +22,12 @@ var restAPIchecks = require('./restapi/request-checks');
 var errorResponseWare = require('./restapi/error-response');
 var HttpError = require('./restapi/http-error');
 
-var user = require('./routes/users');
-var picture = require('./routes/pictures');
+var users = require('./routes/users');
+var pictures = require('./routes/pictures');
 var places = require('./routes/places');
 var component = require('./routes/components');
 var upload = require('./routes/upload');
+
 
 
 // app creation
@@ -44,17 +45,12 @@ app.use(restAPIchecks);
 // Routes
 mongoose.connect('mongodb://localhost:27017/quo');
 
-
 app.use('/upload', upload);
+app.use('/places', places);
+app.use('/users', users);
 
-
-var UserSchema = require('./models/user'),
-    PictureSchema = require('./models/picture'),
-    ComponentSchema = require('./models/component'),
-    PlaceSchema = require('./models/place');
-
-var user = restful.model('users', UserSchema)
-    .methods(['get', 'post', 'put', 'delete']);
+var PictureSchema = require('./models/picture'),
+    ComponentSchema = require('./models/component');
 
 var picture = restful.model('pictures', PictureSchema)
     .methods(['get', 'post', 'put', 'delete']);
@@ -62,32 +58,8 @@ var picture = restful.model('pictures', PictureSchema)
 var component = restful.model('components', ComponentSchema)
     .methods(['get', 'post', 'put', 'delete']);
 
-var place = restful.model('places', PlaceSchema)
-   .methods(['post', 'put', 'delete'])
-    //to use with /places
-    .route('get',function(req, res, next) {
-        place.find({}, function (err, items) {
-            res.locals.items = items; //all items from array are saved locally to be shown
-            res.locals.processed = true; //being used for HttpError
-            res.json(res.locals.items);
-            delete res.locals.items;
-        })
-    })
-    //to use with /places/:id/detail
-    .route('detail', {
-        detail: true,
-        handler: function(req, res, next) {
-        place.findOne({
-                _id: req.params.id
-            }, function(err, item) {
-                res.json(item);
-        })
-    }});
-
-user.register(app, '/users');
 picture.register(app, '/pictures');
 component.register(app, '/components');
-place.register(app, '/places');
 
 // (from express-generator boilerplate  standard code)
 // Errorhandling and requests without proper URLs ************************
