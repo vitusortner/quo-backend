@@ -14,7 +14,8 @@ var express = require('express'),
     multer = require('multer'),
     multerS3 = require('multer-s3'),
     AWS = require('aws-sdk'),
-    path = require('path');
+    path = require('path'),
+    bcrypt = require('bcrypt-nodejs');
 
 // Set the region
 AWS.config.update({region: 'eu-central-1'});
@@ -42,6 +43,7 @@ upload.route('/')
 
         var upload = multer({ storage: Storage }).single("imgUploader");*/
 
+        var key;
         //to save in AWS S3
         var upload = multer({
             storage: multerS3({
@@ -52,7 +54,8 @@ upload.route('/')
                     cb(null, Object.assign({}, req.body));
                 },
                 key: function (req, file, cb) {
-                    cb(null, path.basename(file.originalname));
+                    key= 'quo'+ bcrypt.hashSync(Date.now());
+                    cb(null, path.basename(key));
                 }
             })
         }).single("imgUpload");
@@ -62,7 +65,7 @@ upload.route('/')
                 return next(err);
             }
             res.locals.processed = true;
-            res.locals.items = {"key":req.file.originalname};
+            res.locals.items = {"key":key};
             res.status(codes.created);
             next();
         });
