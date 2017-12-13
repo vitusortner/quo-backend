@@ -61,7 +61,7 @@ places.route('/:id')
     .get(function(req, res,next) {
         placeModel.findById(req.params.id, function (err, items) {
             if (err) {
-                err = new HttpError('item not found by id'+ req.params.id + 'at ' + req.originalUrl, codes.notfound);
+                err = new HttpError(err.message, codes.wrongrequest);
                 next(err);
             } else {
                 res.locals.items = items; //return item is shown
@@ -128,6 +128,40 @@ places.route('/:id/components')
             }
         })
     })
+    .post(function (req, res, next) {
+        var component = new componentModel(req.body);
+        var component_id = component._id;
+        var error = false;
+
+        placeModel.findById(req.params.id, function (err, place) {
+            if (err) {
+                err = new HttpError(err.message, codes.wrongrequest);
+                next(err);
+            } else {
+                var components_array = place.components;
+                components_array.push(component_id);
+                placeModel.findByIdAndUpdate(req.params.id, {$set: {components: components_array}}, { runValidators: true , new: true}, function (err) {
+                    if (err) {
+                        error = true;
+                        next(err);
+                    }
+                })
+            }
+        });
+
+        if (!error) {
+            component.save(function (err) {
+                if (err) {
+                    return next(err);
+                }
+                res.locals.processed = true;
+
+                res.locals.items = component;
+                res.status(codes.created);
+                next();
+            });
+        }
+    })
     .all(function(req, res, next) {
         if (res.locals.processed) {
             next();
@@ -150,6 +184,40 @@ places.route('/:id/pictures')
                 next();
             }
         })
+    })
+    .post(function (req, res, next) {
+        var picture = new pictureModel(req.body);
+        var picture_id = picture._id;
+        var error = false;
+
+        placeModel.findById(req.params.id, function (err, place) {
+            if (err) {
+                err = new HttpError(err.message, codes.wrongrequest);
+                next(err);
+            } else {
+                var picture_array = place.pictures;
+                picture_array.push(picture_id);
+                placeModel.findByIdAndUpdate(req.params.id, {$set: {pictures: picture_array}}, { runValidators: true , new: true}, function (err) {
+                    if (err) {
+                        error = true;
+                        next(err);
+                    }
+                })
+            }
+        });
+
+        if (!error) {
+            picture.save(function (err) {
+                if (err) {
+                    return next(err);
+                }
+                res.locals.processed = true;
+
+                res.locals.items = picture;
+                res.status(codes.created);
+                next();
+            });
+        }
     })
     .all(function(req, res, next) {
         if (res.locals.processed) {

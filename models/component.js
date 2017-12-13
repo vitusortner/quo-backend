@@ -9,7 +9,6 @@
 // modules
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var validator = require('validator');
 
 var ComponentSchema = new Schema({
     position: {
