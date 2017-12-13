@@ -102,9 +102,7 @@ upload.use(function (req, res, next) {
         delete res.locals.items;
     } else if (res.locals.processed) {
         res.set('Content-Type', 'application/json');
-        if (res.get('Status-Code') == undefined) { // maybe other code has set a better status code before
-            res.status(204); // no content;
-        }
+        if (!res.get('Status-Code')) { res.status(codes.nocontent); }
         res.end();
     } else {
         next(); // will result in a 404 from app.js
