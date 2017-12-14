@@ -48,10 +48,10 @@ var PictureSchema = require('./models/picture'),
     ComponentSchema = require('./models/component');
 
 var picture = restful.model('pictures', PictureSchema)
-    .methods(['get', 'post', 'put', 'delete']);
+    .methods(['get', 'put', 'delete']);
 
 var component = restful.model('components', ComponentSchema)
-    .methods(['get', 'post', 'put', 'delete']);
+    .methods(['get', 'put', 'delete']);
 
 picture.register(app, '/pictures');
 component.register(app, '/components');

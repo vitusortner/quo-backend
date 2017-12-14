@@ -26,7 +26,6 @@ users.route('/')
      * */
     .get(function (req, res, next) {
         userModel.find({}, function (err, items) {
-            console.log("here");
             res.locals.items = items;
             res.locals.processed = true;
             next();
