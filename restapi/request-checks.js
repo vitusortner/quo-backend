@@ -30,16 +30,16 @@ router.use(function(req, res, next){
     }
 });
 
-// request type application/json check
+// request type application/json or multipart/form-data check
 router.use(function(req, res, next) {
     if (['POST', 'PUT', 'PATCH'].indexOf(req.method) > -1 &&
-        !( /application\/json/.test(req.get('Content-Type')) )) {
+        (!( /application\/json/.test(req.get('Content-Type')) ) && !( /multipart\/form-data/.test(req.get('Content-Type')) ))) {
         // send error code 415: unsupported media type
         res.status(415).send('wrong Content-Type');  // user has SEND the wrong type
     } else if (!req.accepts('json')) {
         // send 406 that response will be application/json and request does not support it by now as answer
         // user has REQUESTED the wrong type
-        res.status(406).send('response of application/json only supported, please accept this');
+        res.status(406).send('response of application/json or multipart/form-data only supported, please accept this');
     }
     else {
         next(); // let this request pass through as it is OK
