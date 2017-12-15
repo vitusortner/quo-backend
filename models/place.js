@@ -18,7 +18,11 @@ var PlaceSchema = new Schema({
         type: String,
         required: true
     },
-    title_picture: {
+    title_picture_key: {
+        type: String,
+        required: true
+    },
+    description: {
         type: String,
         required: true
     },
@@ -56,7 +60,7 @@ var PlaceSchema = new Schema({
         type: String,
         required: true
     },
-    qr_code: {
+    qr_code_key: {
         type: String
     },
     components: [{

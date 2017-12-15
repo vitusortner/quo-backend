@@ -12,7 +12,7 @@ var Schema = mongoose.Schema;
 var validator = require('validator');
 
 var PictureSchema = new Schema({
-    src: {
+    src_key: {
         type: String,
         required: true
     },
