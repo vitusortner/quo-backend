@@ -6,36 +6,36 @@
  * @type {Router}
  */
 
-// remember: in modules you have 3 variables given by CommonJS
-// 1.) require() function
-// 2.) module.exports
-// 3.) exports (which is module.exports)
-
 // modules
 var express = require('express');
 var codes = require('../restapi/http-codes');
 var HttpError = require('../restapi/http-error.js');
-
-var mongoose = require('mongoose'); // object represents mongoose framework, possible to use all methods of mongoose
 var placeModel = require('../models/place');
+var componentSchema = require('../models/component');
+var pictureSchema = require('../models/picture');
+
+var mongoose = require('mongoose');
+var componentModel = mongoose.model('Component', componentSchema);
+var pictureModel = mongoose.model('Picture', pictureSchema);
 
 var places = express.Router();
 
 places.route('/')
+
     .get(function (req, res, next) {
         placeModel.find({}, function (err, items) {
             console.log("here");
-            res.locals.items = items; //all items from array are saved locally to be shown
-            res.locals.processed = true; //being used for HttpError
+            res.locals.items = items;
+            res.locals.processed = true;
             next();
         });
     })
 
     .post(function (req, res, next) {
 
-        var place = new placeModel(req.body); //take what is in body and use pinModel
+        var place = new placeModel(req.body);
 
-        place.save(function (err) { //validation by mongoose
+        place.save(function (err) {
             if (err) {
                 return next(err);
             }
@@ -52,6 +52,204 @@ places.route('/')
         if (res.locals.processed) {
             next();
         } else {
+            var err = new HttpError('this method is not allowed at ' + req.originalUrl, codes.wrongmethod);
+            next(err);
+        }
+    });
+
+places.route('/:id')
+    .get(function(req, res,next) {
+        placeModel.findById(req.params.id, function (err, items) {
+            if (err) {
+                err = new HttpError(err.message, codes.wrongrequest);
+                next(err);
+            } else {
+                res.locals.items = items; //return item is shown
+                res.locals.processed = true;
+                next();
+            }
+        });
+    })
+
+    .put(function(req, res,next) {
+
+        if (req.params.id !== req.body._id) {
+            var err = new HttpError('id of PUT resource and send JSON body are not equal: ' + req.params.id + " " + req.body.id, codes.wrongrequest);
+            next(err);
+            return;
+        }
+
+        placeModel.findByIdAndUpdate(req.params.id, req.body, {runValidators:true, new: true},(err, item) => {
+            if (err) {
+                err = new HttpError(err.message, codes.wrongrequest);
+                next(err);
+            } else {
+                res.locals.processed = true;
+                res.locals.items = item;
+                res.status(codes.success);
+                next();
+            }
+        });
+    })
+
+    .delete(function(req,res,next) {
+        placeModel.findByIdAndRemove(req.params.id, function (err) {
+            if (err){
+                err = new HttpError(err.message, codes.wrongrequest);
+                next(err);
+            } else {
+                res.status(codes.success);
+                res.locals.processed = true;
+                next();
+            }
+        });
+    })
+
+    .all(function(req, res, next) {
+        if (res.locals.processed) {
+            next();
+        } else {
+            // reply with wrong method code 405
+            var err = new HttpError('this method is not allowed at ' + req.originalUrl, codes.wrongmethod);
+            next(err);
+        }
+    });
+
+places.route('/:id/components')
+    .get(function(req, res,next) {
+        placeModel.findById(req.params.id).populate('components').exec(function(err, items) {
+            if (err) {
+                err = new HttpError(err.message, codes.wrongrequest);
+                next(err);
+            } else {
+                res.locals.items = items.components;
+                res.locals.processed = true;
+                next();
+            }
+        })
+    })
+    .post(function (req, res, next) {
+        var component = new componentModel(req.body);
+        var component_id = component._id;
+        var error = false;
+
+        placeModel.findById(req.params.id, function (err, place) {
+            if (err) {
+                err = new HttpError(err.message, codes.wrongrequest);
+                next(err);
+            } else {
+                var components_array = place.components;
+                components_array.push(component_id);
+                placeModel.findByIdAndUpdate(req.params.id, {$set: {components: components_array}}, { runValidators: true , new: true}, function (err) {
+                    if (err) {
+                        error = true;
+                        next(err);
+                    }
+                })
+            }
+        });
+
+        if (!error) {
+            component.save(function (err) {
+                if (err) {
+                    return next(err);
+                }
+                res.locals.processed = true;
+
+                res.locals.items = component;
+                res.status(codes.created);
+                next();
+            });
+        }
+    })
+    .all(function(req, res, next) {
+        if (res.locals.processed) {
+            next();
+        } else {
+            // reply with wrong method code 405
+            var err = new HttpError('this method is not allowed at ' + req.originalUrl, codes.wrongmethod);
+            next(err);
+        }
+    });
+
+places.route('/:id/pictures')
+    .get(function(req, res,next) {
+        placeModel.findById(req.params.id).populate('pictures').exec(function(err, items) {
+            if (err) {
+                err = new HttpError(err.message, codes.wrongrequest);
+                next(err);
+            } else {
+                res.locals.items = items.pictures;
+                res.locals.processed = true;
+                next();
+            }
+        })
+    })
+    .post(function (req, res, next) {
+        var picture = new pictureModel(req.body);
+        var picture_id = picture._id;
+        var error = false;
+
+        placeModel.findById(req.params.id, function (err, place) {
+            if (err) {
+                err = new HttpError(err.message, codes.wrongrequest);
+                next(err);
+            } else {
+                var picture_array = place.pictures;
+                picture_array.push(picture_id);
+                placeModel.findByIdAndUpdate(req.params.id, {$set: {pictures: picture_array}}, { runValidators: true , new: true}, function (err) {
+                    if (err) {
+                        error = true;
+                        next(err);
+                    }
+                })
+            }
+        });
+
+        if (!error) {
+            picture.save(function (err) {
+                if (err) {
+                    return next(err);
+                }
+                res.locals.processed = true;
+
+                res.locals.items = picture;
+                res.status(codes.created);
+                next();
+            });
+        }
+    })
+    .all(function(req, res, next) {
+        if (res.locals.processed) {
+            next();
+        } else {
+            // reply with wrong method code 405
+            var err = new HttpError('this method is not allowed at ' + req.originalUrl, codes.wrongmethod);
+            next(err);
+        }
+    });
+
+places.route('/qrcode/:id')
+
+    .get(function(req, res,next) {
+        placeModel.findOne({'qr_code_id': req.params.id}, function (err, item) {
+            if (err) {
+                err = new HttpError(err.message, codes.wrongrequest);
+                next(err);
+            } else {
+                console.log(item);
+                res.locals.items = item; //return item is shown
+                res.locals.processed = true;
+                next();
+            }
+        });
+    })
+
+    .all(function(req, res, next) {
+        if (res.locals.processed) {
+            next();
+        } else {
+            // reply with wrong method code 405
             var err = new HttpError('this method is not allowed at ' + req.originalUrl, codes.wrongmethod);
             next(err);
         }

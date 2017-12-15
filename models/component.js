@@ -9,7 +9,6 @@
 // modules
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var validator = require('validator');
 
 var ComponentSchema = new Schema({
     position: {
@@ -17,10 +16,12 @@ var ComponentSchema = new Schema({
         required: true
     },
     text: {
-        type: String
+        type: String,
+        default: null
     },
     picture: {
-        type: String
+        type: String,
+        default: null
     } },{
     timestamps: {
         createdAt: 'timestamp'
