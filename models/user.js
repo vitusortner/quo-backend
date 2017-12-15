@@ -28,7 +28,7 @@ var UserSchema = new Schema({
         required: true
     },
     visited_places: [{
-        _id : false, // so no _id field is added to the subschema
+        _id: false, // so no _id field is added to the subschema
         place_id: {
             type: Schema.Types.ObjectId,
             ref: 'Place'
