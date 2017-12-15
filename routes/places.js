@@ -43,15 +43,12 @@ places.route('/')
                 next(err);
             } else {
                 var hosted_array = user.hosted_places;
-                console.log(hosted_array);
                 hosted_array.push(host_id);
-                console.log(hosted_array);
-                userModel.findByIdAndUpdate(host_id, {$set: {hosted_places: hosted_array}}, { runValidators: true , new: true}, function (err, item) {
+                userModel.findByIdAndUpdate(host_id, {$set: {hosted_places: hosted_array}}, { runValidators: true , new: true}, function (err) {
                     if (err) {
                         error = true;
                         next(err);
                     }
-                    console.log(item.hosted_places);
                 })
             }
         });
@@ -68,7 +65,6 @@ places.route('/')
                 next();
             });
         }
-
     })
 
     .all(function (req, res, next) {
@@ -252,18 +248,44 @@ places.route('/:id/pictures')
         }
     });
 
-places.route('/qrcode/:id')
+places.route('/qrcode/:qr_code_id/:user_id')
 
     .get(function(req, res,next) {
-        placeModel.findOne({'qr_code_id': req.params.id}, function (err, item) {
+
+        var error = false;
+        var user_id = req.params.user_id;
+
+        placeModel.findOne({'qr_code_id': req.params.qr_code_id}, function (err, place) {
             if (err) {
                 err = new HttpError(err.message, codes.wrongrequest);
                 next(err);
             } else {
-                console.log(item);
-                res.locals.items = item; //return item is shown
-                res.locals.processed = true;
-                next();
+                userModel.findById(user_id, function(err, user) {
+                    if (err) {
+                        error = true;
+                        err = new HttpError(err.message, codes.wrongrequest);
+                        next(err);
+                    } else {
+                        var visited_array = user.visited_places;
+                        var place_id = place._id;
+                        var new_place = {
+                            "place_id": place_id,
+                            "timestamp": Date.now()
+                        };
+                        visited_array.push(new_place);
+                        userModel.findByIdAndUpdate(user_id, {$set: {visited_places: visited_array}}, { runValidators: true , new: true}, function (err) {
+                            if (err) {
+                                error = true;
+                                next(err);
+                            }
+                        })
+                    }
+                });
+                if (!error) {
+                    res.locals.items = place;
+                    res.locals.processed = true;
+                    next();
+                }
             }
         });
     })
@@ -277,7 +299,6 @@ places.route('/qrcode/:id')
             next(err);
         }
     });
-
 
 /**
  * This middleware would finally send any data that is in res.locals to the client (as JSON)
