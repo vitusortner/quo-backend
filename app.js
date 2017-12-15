@@ -13,7 +13,9 @@ var morgan = require('morgan');
 var validator = require('validator');
 var express = require('express'),
     mongoose = require('mongoose'),
-    restful = require('node-restful');
+    restful = require('node-restful'),
+    multer = require('multer');
+
 
 //own modules/routes
 var restAPIchecks = require('./restapi/request-checks');
@@ -23,7 +25,9 @@ var HttpError = require('./restapi/http-error');
 var users = require('./routes/users');
 var pictures = require('./routes/pictures');
 var places = require('./routes/places');
-var components = require('./routes/components');
+var component = require('./routes/components');
+var upload = require('./routes/upload');
+
 
 
 // app creation
@@ -41,6 +45,7 @@ app.use(restAPIchecks);
 // Routes
 mongoose.connect('mongodb://localhost:27017/quo');
 
+app.use('/upload', upload);
 app.use('/places', places);
 app.use('/users', users);
 
@@ -55,7 +60,6 @@ var component = restful.model('components', ComponentSchema)
 
 picture.register(app, '/pictures');
 component.register(app, '/components');
-
 
 // (from express-generator boilerplate  standard code)
 // Errorhandling and requests without proper URLs ************************
