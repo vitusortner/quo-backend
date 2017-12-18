@@ -43,7 +43,7 @@ places.route('/')
                 next(err);
             } else {
                 var hosted_array = user.hosted_places;
-                hosted_array.push(host_id);
+                hosted_array.push(place._id);
                 userModel.findByIdAndUpdate(host_id, {$set: {hosted_places: hosted_array}}, { runValidators: true , new: true}, function (err) {
                     if (err) {
                         error = true;
