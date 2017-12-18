@@ -280,18 +280,27 @@ places.route('/qrcode/:qr_code_id/:user_id')
                         next(err);
                     } else {
                         var visited_array = user.visited_places;
-                        var place_id = place._id;
                         var new_place = {
-                            "place_id": place_id,
+                            "place_id": place._id,
                             "timestamp": Date.now()
                         };
-                        visited_array.push(new_place);
-                        userModel.findByIdAndUpdate(user_id, {$set: {visited_places: visited_array}}, { runValidators: true , new: true}, function (err) {
-                            if (err) {
-                                error = true;
-                                next(err);
+                        var isNew = true;
+
+                        visited_array.forEach(function(item){
+                            if (item.place_id.toString() === place._id.toString()) {
+                                isNew = false;
                             }
-                        })
+                        });
+                        if (isNew) {
+                            visited_array.push(new_place);
+                            userModel.findByIdAndUpdate(user_id, {$set: {visited_places: visited_array}}, { runValidators: true , new: true}, function (err) {
+                                if (err) {
+                                    err = new HttpError(err.message, codes.wrongrequest);
+                                    error = true;
+                                    next(err);
+                                }
+                            })
+                        }
                     }
                 });
                 if (!error) {
