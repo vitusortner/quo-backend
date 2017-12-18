@@ -37,23 +37,36 @@ places.route('/')
         var host_id = req.body.host;
         var error = false;
 
-        userModel.findById(host_id, function (err, user) {
+        place.validate(function(err) {
             if (err) {
                 err = new HttpError(err.message, codes.wrongrequest);
+                error = true;
                 next(err);
-            } else {
-                var hosted_array = user.hosted_places;
-                hosted_array.push(place._id);
-                userModel.findByIdAndUpdate(host_id, {$set: {hosted_places: hosted_array}}, { runValidators: true , new: true}, function (err) {
-                    if (err) {
-                        error = true;
-                        next(err);
-                    }
-                })
             }
         });
 
-        if(!error) {
+        if (!error) {
+            userModel.findById(host_id, function (err, user) {
+                if (err) {
+                    err = new HttpError(err.message, codes.wrongrequest);
+                    next(err);
+                } else {
+                    var hosted_array = user.hosted_places;
+                    hosted_array.push(place._id);
+                    userModel.findByIdAndUpdate(host_id, {$set: {hosted_places: hosted_array}}, {
+                        runValidators: true,
+                        new: true
+                    }, function (err) {
+                        if (err) {
+                            error = true;
+                            next(err);
+                        }
+                    })
+                }
+            });
+        }
+
+        if (!error) {
             place.save(function (err) {
                 if (err) {
                     return next(err);
