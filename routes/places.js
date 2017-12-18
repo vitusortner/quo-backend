@@ -35,49 +35,42 @@ places.route('/')
 
         var place = new placeModel(req.body);
         var host_id = req.body.host;
-        var error = false;
 
         place.validate(function(err) {
             if (err) {
                 err = new HttpError(err.message, codes.wrongrequest);
-                error = true;
                 next(err);
+            } else {
+                userModel.findById(host_id, function (err, user) {
+                    if (err) {
+                        err = new HttpError(err.message, codes.wrongrequest);
+                        next(err);
+                    } else {
+                        var hosted_array = user.hosted_places;
+                        hosted_array.push(place._id);
+                        userModel.findByIdAndUpdate(host_id, {$set: {hosted_places: hosted_array}}, {
+                            runValidators: true,
+                            new: true
+                        }, function (err) {
+                            if (err) {
+                                next(err);
+                            } else {
+                                place.save(function (err) {
+                                    if (err) {
+                                        return next(err);
+                                    }
+                                    res.locals.processed = true;
+
+                                    res.locals.items = place;
+                                    res.status(codes.created);
+                                    next();
+                                });
+                            }
+                        })
+                    }
+                });
             }
         });
-
-        if (!error) {
-            userModel.findById(host_id, function (err, user) {
-                if (err) {
-                    err = new HttpError(err.message, codes.wrongrequest);
-                    next(err);
-                } else {
-                    var hosted_array = user.hosted_places;
-                    hosted_array.push(place._id);
-                    userModel.findByIdAndUpdate(host_id, {$set: {hosted_places: hosted_array}}, {
-                        runValidators: true,
-                        new: true
-                    }, function (err) {
-                        if (err) {
-                            error = true;
-                            next(err);
-                        }
-                    })
-                }
-            });
-        }
-
-        if (!error) {
-            place.save(function (err) {
-                if (err) {
-                    return next(err);
-                }
-                res.locals.processed = true;
-
-                res.locals.items = place;
-                res.status(codes.created);
-                next();
-            });
-        }
     })
 
     .all(function (req, res, next) {
@@ -163,7 +156,6 @@ places.route('/:id/components')
     .post(function (req, res, next) {
         var component = new componentModel(req.body);
         var component_id = component._id;
-        var error = false;
 
         placeModel.findById(req.params.id, function (err, place) {
             if (err) {
@@ -174,25 +166,22 @@ places.route('/:id/components')
                 components_array.push(component_id);
                 placeModel.findByIdAndUpdate(req.params.id, {$set: {components: components_array}}, { runValidators: true , new: true}, function (err) {
                     if (err) {
-                        error = true;
                         next(err);
+                    } else {
+                        component.save(function (err) {
+                            if (err) {
+                                return next(err);
+                            }
+                            res.locals.processed = true;
+
+                            res.locals.items = component;
+                            res.status(codes.created);
+                            next();
+                        });
                     }
                 })
             }
         });
-
-        if (!error) {
-            component.save(function (err) {
-                if (err) {
-                    return next(err);
-                }
-                res.locals.processed = true;
-
-                res.locals.items = component;
-                res.status(codes.created);
-                next();
-            });
-        }
     })
     .all(function(req, res, next) {
         if (res.locals.processed) {
@@ -220,7 +209,6 @@ places.route('/:id/pictures')
     .post(function (req, res, next) {
         var picture = new pictureModel(req.body);
         var picture_id = picture._id;
-        var error = false;
 
         placeModel.findById(req.params.id, function (err, place) {
             if (err) {
@@ -231,25 +219,22 @@ places.route('/:id/pictures')
                 picture_array.push(picture_id);
                 placeModel.findByIdAndUpdate(req.params.id, {$set: {pictures: picture_array}}, { runValidators: true , new: true}, function (err) {
                     if (err) {
-                        error = true;
                         next(err);
+                    } else {
+                        picture.save(function (err) {
+                            if (err) {
+                                return next(err);
+                            }
+                            res.locals.processed = true;
+
+                            res.locals.items = picture;
+                            res.status(codes.created);
+                            next();
+                        });
                     }
                 })
             }
         });
-
-        if (!error) {
-            picture.save(function (err) {
-                if (err) {
-                    return next(err);
-                }
-                res.locals.processed = true;
-
-                res.locals.items = picture;
-                res.status(codes.created);
-                next();
-            });
-        }
     })
     .all(function(req, res, next) {
         if (res.locals.processed) {
@@ -298,16 +283,15 @@ places.route('/qrcode/:qr_code_id/:user_id')
                                     err = new HttpError(err.message, codes.wrongrequest);
                                     error = true;
                                     next(err);
+                                } else {
+                                    res.locals.items = place;
+                                    res.locals.processed = true;
+                                    next();
                                 }
                             })
                         }
                     }
                 });
-                if (!error) {
-                    res.locals.items = place;
-                    res.locals.processed = true;
-                    next();
-                }
             }
         });
     })
