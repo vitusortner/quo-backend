@@ -22,7 +22,7 @@ function setUserInfo(request) {
 //========================================
 // Login Route
 //========================================
-exports.login = function(req, res, next) {
+exports.login = function (req, res, next) {
 
     let userInfo = setUserInfo(req.user);
 
@@ -35,27 +35,29 @@ exports.login = function(req, res, next) {
 //========================================
 // Registration Route
 //========================================
-exports.register = function(req, res, next) {
+exports.register = function (req, res, next) {
     // Check for registration errors
     const email = req.body.email;
     const password = req.body.password;
 
     // Return error if no email provided
     if (!email) {
-        return res.status(422).send({ error: 'You must enter an email address.'});
+        return res.status(422).send({error: 'You must enter an email address.'});
     }
 
     // Return error if no password provided
     if (!password) {
-        return res.status(422).send({ error: 'You must enter a password.' });
+        return res.status(422).send({error: 'You must enter a password.'});
     }
 
-    User.findOne({ email: email }, function(err, existingUser) {
-        if (err) { return next(err); }
+    User.findOne({email: email}, function (err, existingUser) {
+        if (err) {
+            return next(err);
+        }
 
         // If user is not unique, return error
         if (existingUser) {
-            return res.status(422).send({ error: 'That email address is already in use.' });
+            return res.status(422).send({error: 'That email address is already in use.'});
         }
 
         // If email is unique and password was provided, create account
@@ -64,8 +66,10 @@ exports.register = function(req, res, next) {
             password: password
         });
 
-        user.save(function(err, user) {
-            if (err) { return next(err); }
+        user.save(function (err, user) {
+            if (err) {
+                return next(err);
+            }
 
             // Respond with JWT if user was created
 
