@@ -15,6 +15,7 @@ var validator = require('validator');
 var UserSchema = new Schema({
     email: {
         type: String,
+        unique: true,
         validate: {
             validator: validator.isEmail,
             message: '{VALUE} is not a valid email',
