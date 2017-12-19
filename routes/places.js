@@ -250,7 +250,6 @@ places.route('/qrcode/:qr_code_id/:user_id')
 
     .get(function(req, res,next) {
 
-        var error = false;
         var user_id = req.params.user_id;
 
         placeModel.findOne({'qr_code_id': req.params.qr_code_id}, function (err, place) {
@@ -258,40 +257,46 @@ places.route('/qrcode/:qr_code_id/:user_id')
                 err = new HttpError(err.message, codes.wrongrequest);
                 next(err);
             } else {
-                userModel.findById(user_id, function(err, user) {
-                    if (err) {
-                        error = true;
-                        err = new HttpError(err.message, codes.wrongrequest);
-                        next(err);
-                    } else {
-                        var visited_array = user.visited_places;
-                        var new_place = {
-                            "place_id": place._id,
-                            "timestamp": Date.now()
-                        };
-                        var isNew = true;
-
-                        visited_array.forEach(function(item){
-                            if (item.place_id.toString() === place._id.toString()) {
-                                isNew = false;
-                            }
-                        });
-                        if (isNew) {
-                            visited_array.push(new_place);
-                            userModel.findByIdAndUpdate(user_id, {$set: {visited_places: visited_array}}, { runValidators: true , new: true}, function (err) {
-                                if (err) {
-                                    err = new HttpError(err.message, codes.wrongrequest);
-                                    error = true;
-                                    next(err);
-                                } else {
-                                    res.locals.items = place;
-                                    res.locals.processed = true;
-                                    next();
+                if(place.host === user_id){
+                    res.locals.items = place;
+                    res.locals.processed = true;
+                    next();
+                } else {
+                    userModel.findById(user_id, function (err, user) {
+                        if (err) {
+                            err = new HttpError(err.message, codes.wrongrequest);
+                            next(err);
+                        } else {
+                            var visited_array = user.visited_places;
+                            var new_place = {
+                                "place_id": place._id,
+                                "timestamp": Date.now()
+                            };
+                            var isNew = true;
+                            visited_array.forEach(function (item) {
+                                if (item.place_id.toString() === place._id.toString()) {
+                                    isNew = false;
                                 }
-                            })
+                            });
+                            if (isNew) {
+                                visited_array.push(new_place);
+                                userModel.findByIdAndUpdate(user_id, {$set: {visited_places: visited_array}}, {
+                                    runValidators: true,
+                                    new: true
+                                }, function (err) {
+                                    if (err) {
+                                        err = new HttpError(err.message, codes.wrongrequest);
+                                        next(err);
+                                    } else {
+                                        res.locals.items = place;
+                                        res.locals.processed = true;
+                                        next();
+                                    }
+                                })
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
         });
     })
