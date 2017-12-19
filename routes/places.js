@@ -247,6 +247,18 @@ places.route('/:id')
     });
 
 places.route('/:id/components')
+
+
+    /**
+     * @api {get} /places/:id/components Request all component objects
+     * @apiName GetPlaceComponents
+     * @apiGroup Place
+     *
+     * @apiParam {String} id  Unique ID of the place
+     *
+     * @apiSuccess {Object[]} components  List of all components objects the place contains.
+     *
+     * */
     .get(function (req, res, next) {
         placeModel.findById(req.params.id).populate('components').exec(function (err, items) {
             if (err) {
@@ -259,6 +271,57 @@ places.route('/:id/components')
             }
         })
     })
+    /**
+     * @api {post} /places/:id/components Create a new Component
+     * @apiName PostPlace
+     * @apiGroup Place
+     *
+     * @apiParam {String}   title           Required title of the Place.
+     * @apiParam {String}   title_picture   ID of the title picture.
+     * @apiParam {Date}     [start=Now]     Optional start date.
+     * @apiParam {Date}     [end]           Optional end date.
+     * @apiParam {Number}   lat             Required latitude value.
+     * @apiParam {Number}   long            Required longitude value.
+     * @apiParam {Object}   [address]       Optional address object.
+     * @apiParam {String}   [address.street]    Optional address Street.
+     * @apiParam {String}   [address.city]      Optional address city.
+     * @apiParam {Number}   [address.zip_code]  Optional address zip code.
+     * @apiParam {String}   host            ID of the user who is host.
+     * @apiParam {String}   qr_code_id      ID that is saved in QR Code.
+     * @apiParam {String}   [qr_code]       Source String of the QR Code Image.
+     * @apiParam {Object[]} [components]    ID's from Components the place contains
+     * @apiParam {Object[]} [pictures]      ID's from pictures the place contains
+     * @apiParam {Object}   [settings]      Optional settings object
+     * @apiParam {Boolean}  [settings.is_photo_upload_allowd=true]     Are users allowed to upload images to the place gallery.
+     * @apiParam {Boolean}  [settings.has_to_validate_gps=true]        Are user required to be at the geological location of the place.
+     *
+     * @apiParamExample {json} Request-Example:
+     *{
+     *           "title":"Example Place",
+     *           "title_picture":"quo1A2B3C",
+     *           "start":"yyyy-MM-dd'T'HH:mm:ss'Z",
+     *           "end":"yyyy-MM-dd'T'HH:mm:ss'Z",
+     *           "lat":1234,
+     *           "long":4321,
+     *           "address":{
+     *               "street":"Example Street 42",
+     *               "city":"Examplecity",
+     *               "zip-code":"12345"
+     *           },
+     *           "host":"12345",
+     *           "qr_code_id":"9A8B7C6D5F",
+     *           "qr_code":"quo9Z8Y7X",
+     *           "components":["1a2b3c4d5e6f7g8h9i10j11k"],
+	 *           "pictures":["1a2b3c4d5e6f7g8h9i10j11k"],
+     *           "settings":{
+     *               "is_photo_upload_allowed":true,
+     *               "has_to_validate_gps":true
+     *           }
+     *  }
+     *
+     * @apiSuccess {Object} place  Place object that was created.
+     *
+     * */
     .post(function (req, res, next) {
         var component = new componentModel(req.body);
         var component_id = component._id;
@@ -304,6 +367,17 @@ places.route('/:id/components')
     });
 
 places.route('/:id/pictures')
+
+    /**
+     * @api {get} /places/:id/pictures Request all picture objects
+     * @apiName GetPlacePictures
+     * @apiGroup Place
+     *
+     * @apiParam {String} id  Unique ID of the place
+     *
+     * @apiSuccess {Object[]} Pictures  List of all picture objects the place contains.
+     *
+     * */
     .get(function (req, res, next) {
         placeModel.findById(req.params.id).populate('pictures').exec(function (err, items) {
             if (err) {
@@ -361,7 +435,16 @@ places.route('/:id/pictures')
     });
 
 places.route('/qrcode/:id')
-
+    /**
+     * @api {get} /places/qrcode/:id Request the place with the QR Code
+     * @apiName GetPlaceQRcode
+     * @apiGroup Place
+     *
+     * @apiParam {String} id  ID the QR Code contains
+     *
+     * @apiSuccess {Object} Place  The requested place object
+     *
+     * */
     .get(function (req, res, next) {
         placeModel.findOne({'qr_code_id': req.params.id}, function (err, item) {
             if (err) {
