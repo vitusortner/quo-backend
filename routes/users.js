@@ -50,7 +50,7 @@ users.route('/')
     });
 
 users.route('/:id')
-    .get(function(req, res,next) {
+    .get(function (req, res, next) {
         userModel.findById(req.params.id, function (err, items) {
             if (err) {
                 err = new HttpError(err.message, codes.wrongrequest);
@@ -63,7 +63,7 @@ users.route('/:id')
         });
     })
 
-    .put(function(req, res,next) {
+    .put(function (req, res, next) {
 
         if (req.params.id !== req.body._id) {
             var err = new HttpError('id of PUT resource and send JSON body are not equal: ' + req.params.id + " " + req.body.id, codes.wrongrequest);
@@ -71,7 +71,7 @@ users.route('/:id')
             return;
         }
 
-        userModel.findByIdAndUpdate(req.params.id, req.body, {runValidators:true, new: true},(err, item) => {
+        userModel.findByIdAndUpdate(req.params.id, req.body, {runValidators: true, new: true}, (err, item) => {
             if (err) {
                 err = new HttpError(err.message, codes.wrongrequest);
                 next(err);
@@ -84,9 +84,9 @@ users.route('/:id')
         });
     })
 
-    .delete(function(req,res,next) {
+    .delete(function (req, res, next) {
         userModel.findByIdAndRemove(req.params.id, function (err) {
-            if (err){
+            if (err) {
                 err = new HttpError(err.message, codes.wrongrequest);
                 next(err);
             } else {
@@ -97,7 +97,7 @@ users.route('/:id')
         });
     })
 
-    .all(function(req, res, next) {
+    .all(function (req, res, next) {
         if (res.locals.processed) {
             next();
         } else {
@@ -109,19 +109,25 @@ users.route('/:id')
 
 users.route('/:id/:visited_places')
 
-    .get(function(req, res,next) {
-        userModel.findById(req.params.id).populate('visited_places').exec(function(err, items) {
-            if (err) {
-                err = new HttpError(err, 400);
-                next(err);
-            } else {
-                res.locals.items = items.visited_places;
-                res.locals.processed = true;
-                next();
-            }
-        })
+    .get(function (req, res, next) {
+        userModel
+            .findById(req.params.id)
+            .populate({
+                path: 'visited_places.place_id',
+                model: 'Place'
+            })
+            .exec(function (err, items) {
+                if (err) {
+                    err = new HttpError(err, codes.wrongrequest);
+                    next(err);
+                } else {
+                    res.locals.items = items.visited_places;
+                    res.locals.processed = true;
+                    next();
+                }
+            })
     })
-    .all(function(req, res, next) {
+    .all(function (req, res, next) {
         if (res.locals.processed) {
             next();
         } else {
@@ -133,10 +139,10 @@ users.route('/:id/:visited_places')
 
 users.route('/:id/hosted_places')
 
-    .get(function(req, res,next) {
-        userModel.findById(req.params.id).populate('hosted_places').exec(function(err, items) {
+    .get(function (req, res, next) {
+        userModel.findById(req.params.id).populate('hosted_places').exec(function (err, items) {
             if (err) {
-                err = new HttpError(err, 400);
+                err = new HttpError(err, codes.wrongrequest);
                 next(err);
             } else {
                 res.locals.items = items.hosted_places;
@@ -145,7 +151,7 @@ users.route('/:id/hosted_places')
             }
         })
     })
-    .all(function(req, res, next) {
+    .all(function (req, res, next) {
         if (res.locals.processed) {
             next();
         } else {
@@ -160,7 +166,7 @@ users.route('/:id/hosted_places')
  * This middleware would finally send any data that is in res.locals to the client (as JSON)
  * or, if nothing left, will send a 204.
  */
-users.use(function(req, res, next){
+users.use(function (req, res, next) {
     if (res.locals.items) {
         res.json(res.locals.items);
         delete res.locals.items;

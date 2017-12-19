@@ -16,9 +16,8 @@ var validator = require('validator');
 var UserSchema = new Schema({
     email: {
         type: String,
-        lowercase: true,
         unique: true,
-        validate:{
+        validate: {
             validator: validator.isEmail,
             message: '{VALUE} is not a valid email',
             isAsync: false
@@ -31,8 +30,12 @@ var UserSchema = new Schema({
         required: true
     },
     visited_places: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Place'
+        _id: false, // so no _id field is added to the subschema
+        place_id: {
+            type: Schema.Types.ObjectId,
+            ref: 'Place'
+        },
+        timestamp: Date
     }],
     hosted_places: [{
         type: Schema.Types.ObjectId,
