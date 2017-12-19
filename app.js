@@ -10,6 +10,7 @@
 var bodyParser = require('body-parser');
 var debug = require('debug');
 var morgan = require('morgan');
+const passport = require('passport');
 var validator = require('validator');
 var express = require('express'),
     mongoose = require('mongoose'),
@@ -23,6 +24,7 @@ var errorResponseWare = require('./restapi/error-response');
 var HttpError = require('./restapi/http-error');
 var config = require('./config/main');
 
+var auth = require('./routes/auth');
 var users = require('./routes/users');
 var pictures = require('./routes/pictures');
 var places = require('./routes/places');
@@ -36,6 +38,7 @@ var app = express();
 
 //Middleware
 app.use(bodyParser.json());
+app.use(passport.initialize());
 
 // logging
 app.use(morgan('dev'));
@@ -49,6 +52,7 @@ mongoose.connect(config.database);
 app.use('/upload', upload);
 app.use('/places', places);
 app.use('/users', users);
+app.use('/auth', auth);
 
 var PictureSchema = require('./models/picture'),
     ComponentSchema = require('./models/component');
