@@ -11,12 +11,13 @@ var express = require('express');
 var codes = require('../restapi/http-codes');
 var HttpError = require('../restapi/http-error.js');
 var userModel = require('../models/user');
+const passport = require('passport');
 
 var users = express.Router();
 
 users.route('/')
 
-    .get(function (req, res, next) {
+    .get(passport.authenticate('jwt', { session: false }), function (req, res, next) {
         userModel.find({}, function (err, items) {
             res.locals.items = items;
             res.locals.processed = true;
