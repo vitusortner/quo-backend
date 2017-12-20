@@ -24,7 +24,6 @@ var credentials = new AWS.SharedIniFileCredentials();
 AWS.config.credentials = credentials;
 var s3 = new AWS.S3();
 
-
 var upload = express.Router();
 
 upload.route('/')
@@ -82,17 +81,15 @@ upload.route('/')
 
 upload.route('/:key')
     .get(function (req, res, next) {
-        var params = {
+        const path = s3.getSignedUrl('getObject', {
             Bucket: "quo-picture-bucket",
-            Key: req.params.key
-        };
-
-        s3.getObject(params, function (err, data) {
-            if (err) {
-                next(err);
-            }
-            res.send({ data });
+            Key: req.params.key,
+            Expires: 7760000 //90 days
         });
+
+        res.locals.items = {"path": path};
+        res.locals.processed = true;
+        next();
 
     });
 
