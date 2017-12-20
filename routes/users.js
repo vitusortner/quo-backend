@@ -11,43 +11,13 @@ var express = require('express');
 var codes = require('../restapi/http-codes');
 var HttpError = require('../restapi/http-error.js');
 var userModel = require('../models/user');
+var userController = require('../controllers/userController');
 
 var users = express.Router();
 
 users.route('/')
-
-    .get(function (req, res, next) {
-        userModel.find({}, function (err, items) {
-            res.locals.items = items;
-            res.locals.processed = true;
-            next();
-        });
-    })
-
-    .post(function (req, res, next) {
-
-        var user = new userModel(req.body);
-        user.save(function (err) {
-            if (err) {
-                return next(err);
-            }
-            res.locals.processed = true;
-
-            res.locals.items = user;
-            res.status(codes.created);
-            next();
-        });
-
-    })
-
-    .all(function (req, res, next) {
-        if (res.locals.processed) {
-            next();
-        } else {
-            var err = new HttpError('this method is not allowed at ' + req.originalUrl, codes.wrongmethod);
-            next(err);
-        }
-    });
+    .get(userController.findAll)
+    .post(userController.postOne);
 
 users.route('/:id')
     .get(function (req, res, next) {
@@ -95,16 +65,6 @@ users.route('/:id')
                 next();
             }
         });
-    })
-
-    .all(function (req, res, next) {
-        if (res.locals.processed) {
-            next();
-        } else {
-            // reply with wrong method code 405
-            var err = new HttpError('this method is not allowed at ' + req.originalUrl, codes.wrongmethod);
-            next(err);
-        }
     });
 
 users.route('/:id/:visited_places')
@@ -140,16 +100,19 @@ users.route('/:id/:visited_places')
 users.route('/:id/hosted_places')
 
     .get(function (req, res, next) {
-        userModel.findById(req.params.id).populate('hosted_places').exec(function (err, items) {
-            if (err) {
-                err = new HttpError(err, codes.wrongrequest);
-                next(err);
-            } else {
-                res.locals.items = items.hosted_places;
-                res.locals.processed = true;
-                next();
-            }
-        })
+        userModel
+            .findById(req.params.id)
+            .populate('hosted_places')
+            .exec(function (err, items) {
+                if (err) {
+                    err = new HttpError(err, codes.wrongrequest);
+                    next(err);
+                } else {
+                    res.locals.items = items.hosted_places;
+                    res.locals.processed = true;
+                    next();
+                }
+            })
     })
     .all(function (req, res, next) {
         if (res.locals.processed) {
@@ -161,6 +124,7 @@ users.route('/:id/hosted_places')
         }
     });
 
+users.use(userController.methodNotAllowed);
 
 /**
  * This middleware would finally send any data that is in res.locals to the client (as JSON)
