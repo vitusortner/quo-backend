@@ -9,12 +9,11 @@
 "use strict";
 
 // modules
-var express = require('express');
 var codes = require('../restapi/http-codes');
 var HttpError = require('../restapi/http-error.js');
 var userModel = require('../models/user');
 
-exports.findAll = function(req, res, next) {
+exports.readAll = function(req, res, next) {
     userModel.find({}, function (err, items) {
         res.locals.items = items;
         res.locals.processed = true;
@@ -22,7 +21,7 @@ exports.findAll = function(req, res, next) {
     });
 };
 
-exports.postOne = function (req, res, next) {
+exports.create = function (req, res, next) {
     const user = new userModel(req.body);
     user.save(function (err) {
         if (err) {
@@ -35,11 +34,82 @@ exports.postOne = function (req, res, next) {
     });
 };
 
-exports.methodNotAllowed = function (req, res, next) {
-    if (res.locals.processed) {
-        next();
-    } else {
-        const err = new HttpError('this method is not allowed at ' + req.originalUrl, codes.wrongmethod);
+exports.readById = function (req, res, next) {
+    userModel.findById(req.params.id, function (err, items) {
+        if (err) {
+            err = new HttpError(err.message, codes.wrongrequest);
+            next(err);
+        } else {
+            res.locals.items = items; //return item is shown
+            res.locals.processed = true;
+            next();
+        }
+    });
+};
+
+exports.update = function (req, res, next) {
+    if (req.params.id !== req.body._id) {
+        var err = new HttpError('id of PUT resource and send JSON body are not equal: ' + req.params.id + " " + req.body.id, codes.wrongrequest);
         next(err);
+        return;
     }
+    userModel.findByIdAndUpdate(req.params.id, req.body, {runValidators: true, new: true}, (err, item) => {
+        if (err) {
+            err = new HttpError(err.message, codes.wrongrequest);
+            next(err);
+        } else {
+            res.locals.processed = true;
+            res.locals.items = item;
+            res.status(codes.success);
+            next();
+        }
+    });
+};
+
+exports.delete = function (req, res, next) {
+    userModel.findByIdAndRemove(req.params.id, function (err) {
+        if (err) {
+            err = new HttpError(err.message, codes.wrongrequest);
+            next(err);
+        } else {
+            res.status(codes.success);
+            res.locals.processed = true;
+            next();
+        }
+    });
+};
+
+exports.populateVisitedPlaces = function (req, res, next) {
+    userModel
+        .findById(req.params.id)
+        .populate({
+            path: 'visited_places.place_id',
+            model: 'Place'
+        })
+        .exec(function (err, items) {
+            if (err) {
+                err = new HttpError(err, codes.wrongrequest);
+                next(err);
+            } else {
+                res.locals.items = items.visited_places;
+                res.locals.processed = true;
+                next();
+            }
+        })
+};
+
+exports.populateHostedPlaces = function (req, res, next) {
+    userModel
+        .findById(req.params.id)
+        .populate('hosted_places')
+        .exec(function (err, items) {
+            if (err) {
+                err = new HttpError(err, codes.wrongrequest);
+                next(err);
+            } else {
+                res.locals.items = items.hosted_places;
+                res.locals.processed = true;
+                next();
+            }
+        })
 };
