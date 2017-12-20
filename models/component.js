@@ -19,7 +19,7 @@ var ComponentSchema = new Schema({
         type: String,
         default: null
     },
-    picture_key: {
+    picture: {
         type: String,
         default: null
     } },{

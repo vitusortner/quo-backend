@@ -9,10 +9,9 @@
 // modules
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var validator = require('validator');
 
 var PictureSchema = new Schema({
-    src_key: {
+    src: {
         type: String,
         required: true
     },
