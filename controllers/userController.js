@@ -15,6 +15,10 @@ var userModel = require('../models/user');
 
 exports.readAll = function(req, res, next) {
     userModel.find({}, function (err, items) {
+        if (err) {
+            err = new HttpError(err.message, codes.wrongrequest);
+            return next(err);
+        }
         res.locals.items = items;
         res.locals.processed = true;
         next();
@@ -25,6 +29,7 @@ exports.create = function (req, res, next) {
     const user = new userModel(req.body);
     user.save(function (err) {
         if (err) {
+            err = new HttpError(err.message, codes.wrongrequest);
             return next(err);
         }
         res.locals.processed = true;
@@ -38,31 +43,30 @@ exports.readById = function (req, res, next) {
     userModel.findById(req.params.id, function (err, items) {
         if (err) {
             err = new HttpError(err.message, codes.wrongrequest);
-            next(err);
-        } else {
-            res.locals.items = items; //return item is shown
-            res.locals.processed = true;
-            next();
+            return next(err);
         }
+        res.locals.items = items; //return item is shown
+        res.locals.processed = true;
+        next();
     });
 };
 
 exports.update = function (req, res, next) {
     if (req.params.id !== req.body._id) {
-        var err = new HttpError('id of PUT resource and send JSON body are not equal: ' + req.params.id + " " + req.body.id, codes.wrongrequest);
-        next(err);
-        return;
+        const err = new HttpError('id of PUT resource and send JSON body are not equal: '
+            + req.params.id + " "
+            + req.body.id, codes.wrongrequest);
+        return next(err);
     }
     userModel.findByIdAndUpdate(req.params.id, req.body, {runValidators: true, new: true}, (err, item) => {
         if (err) {
             err = new HttpError(err.message, codes.wrongrequest);
-            next(err);
-        } else {
-            res.locals.processed = true;
-            res.locals.items = item;
-            res.status(codes.success);
-            next();
+            return next(err);
         }
+        res.locals.processed = true;
+        res.locals.items = item;
+        res.status(codes.success);
+        next();
     });
 };
 
@@ -70,12 +74,11 @@ exports.delete = function (req, res, next) {
     userModel.findByIdAndRemove(req.params.id, function (err) {
         if (err) {
             err = new HttpError(err.message, codes.wrongrequest);
-            next(err);
-        } else {
-            res.status(codes.success);
-            res.locals.processed = true;
-            next();
+            return next(err);
         }
+        res.status(codes.success);
+        res.locals.processed = true;
+        next();
     });
 };
 
@@ -89,12 +92,11 @@ exports.populateVisitedPlaces = function (req, res, next) {
         .exec(function (err, items) {
             if (err) {
                 err = new HttpError(err, codes.wrongrequest);
-                next(err);
-            } else {
-                res.locals.items = items.visited_places;
-                res.locals.processed = true;
-                next();
+                return next(err);
             }
+            res.locals.items = items.visited_places;
+            res.locals.processed = true;
+            next();
         })
 };
 
@@ -105,11 +107,10 @@ exports.populateHostedPlaces = function (req, res, next) {
         .exec(function (err, items) {
             if (err) {
                 err = new HttpError(err, codes.wrongrequest);
-                next(err);
-            } else {
-                res.locals.items = items.hosted_places;
-                res.locals.processed = true;
-                next();
+                return next(err);
             }
+            res.locals.items = items.hosted_places;
+            res.locals.processed = true;
+            next();
         })
 };
