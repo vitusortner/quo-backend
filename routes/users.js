@@ -17,8 +17,9 @@ var users = express.Router();
 users.route('/')
 
     /**
-     * @api {get} /users Request all User information
+     * @api {get} /users Get all users
      * @apiName GetUsers
+     * @apiVersion 0.1.0
      * @apiGroup User
      *
      * @apiSuccess {Object[]} users  List of all user Objects.
@@ -35,11 +36,15 @@ users.route('/')
     /**
      * @api {post} /users Create a new User
      * @apiName PostUser
+     * @apiVersion 0.1.0
      * @apiGroup User
      *
      * @apiParam {String} email  Required email of the User.
      * @apiParam {String{8..}} password     Required password of the User.
      * @apiParam {Obeject[]} [visited_places] Optional array with visited places.
+     * @apiParam {Object} [visitedPlace]
+     * @apiParam {String} [visitedPlace.place_id]    ID of the visited place.
+     * @apiParam {Date}   [visitedPlace.timestamp]   Date when place is visited.
      * @apiParam {Obeject[]} [hosted_places] Optional array with hosted places.
      * @apiParam {Boolean} [active=true]     Optional active status with default true.
      *
@@ -48,9 +53,14 @@ users.route('/')
      *  {
      *      "email":"example@email.com",
      *      "password":"password123",
-     *      "visited_places":[],
+     *      "visited_places":[
+     *          {
+     *          "place_id":"123,
+     *          "timestamp":"yyyy-MM-dd'T'HH:mm:ss'Z"
+     *          }
+     *      ],
      *      "hosted_places":[],
-     *      "avtive":true
+     *      "active":true
      *  }
      *
      * @apiSuccess {Object} users  User object that was created.
@@ -84,8 +94,9 @@ users.route('/')
 users.route('/:id')
 
     /**
-     * @api {get} /users/:id Request User information
+     * @api {get} /users/:id Get a single user
      * @apiName GetUser
+     * @apiVersion 0.1.0
      * @apiGroup User
      *
      * @apiParam {String} id  The Users-ID
@@ -111,19 +122,24 @@ users.route('/:id')
         });
     })
 
-
     /**
-     * @api {put} /users/:id Modify User information
+     * @api {put} /users/:id Modify a user
      * @apiName PutUser
+     * @apiVersion 0.1.0
      * @apiGroup User
      *
      * @apiParam {String} id  The Users-ID
      *
      * @apiParamExample {json} Request-Example:
      *  {
-     *      "email":"oter@email.com",
+     *      "email":"other@email.com",
      *      "password":"123password",
-     *      "visited_places":[12345678],
+     *      "visited_places":[
+     *          {
+     *          "place_id":"321,
+     *          "timestamp":"yyyy-MM-dd'T'HH:mm:ss'Z"
+     *          }
+     *      ],
      *      "hosted_places":[],
      *      "avtive":false
      *  }
@@ -152,10 +168,10 @@ users.route('/:id')
         });
     })
 
-
     /**
-     * @api {delete} /users/:id Delete User Object
+     * @api {delete} /users/:id Delete a user
      * @apiName DeleteUser
+     * @apiVersion 0.1.0
      * @apiGroup User
      *
      * @apiParam {String} id  The Users-ID
@@ -187,8 +203,9 @@ users.route('/:id')
 users.route('/:id/:visited_places')
 
     /**
-     * @api {get} /users/:id/visited_places Get all visited Places
+     * @api {get} /users/:id/visited_places Get all visited places
      * @apiName GetUserVisitedPlaces
+     * @apiVersion 0.1.0
      * @apiGroup User
      *
      * @apiParam {String} id  The Users-ID
@@ -227,8 +244,9 @@ users.route('/:id/:visited_places')
 users.route('/:id/hosted_places')
 
     /**
-     * @api {get} /users/:id/hosted_places Get all hosted Places
+     * @api {get} /users/:id/hosted_places Get all hosted places
      * @apiName GetUserHostedPlaces
+     * @apiVersion 0.1.0
      * @apiGroup User
      *
      * @apiParam {String} id  The Users-ID

@@ -26,6 +26,7 @@ places.route('/')
     /**
      * @api {get} /places Request all Place information's
      * @apiName GetPlaces
+     * @apiVersion 0.1.0
      * @apiGroup Place
      *
      * @apiSuccess {Object[]} places  List of all place Objects.
@@ -40,33 +41,36 @@ places.route('/')
     })
 
     /**
-     * @api {post} /places Create a new Place
+     * @api {post} /places Create a new place
      * @apiName PostPlace
+     * @apiVersion 0.1.0
      * @apiGroup Place
      *
-     * @apiParam {String}   title           Required title of the Place.
-     * @apiParam {String}   title_picture   ID of the title picture.
-     * @apiParam {Date}     [start=Now]     Optional start date.
-     * @apiParam {Date}     [end]           Optional end date.
-     * @apiParam {Number}   lat             Required latitude value.
-     * @apiParam {Number}   long            Required longitude value.
-     * @apiParam {Object}   [address]       Optional address object.
+     * @apiParam {String}   title               Required title of the place.
+     * @apiParam {String}   title_picture_key   Key to download the picture.
+     * @apiParam {String}   description         Short description.
+     * @apiParam {Date}     [start=Now]         Optional start date.
+     * @apiParam {Date}     [end]               Optional end date.
+     * @apiParam {Number}   lat                 Required latitude value.
+     * @apiParam {Number}   long                Required longitude value.
+     * @apiParam {Object}   [address]           Optional address object.
      * @apiParam {String}   [address.street]    Optional address Street.
      * @apiParam {String}   [address.city]      Optional address city.
      * @apiParam {Number}   [address.zip_code]  Optional address zip code.
-     * @apiParam {String}   host            ID of the user who is host.
-     * @apiParam {String}   qr_code_id      ID that is saved in QR Code.
-     * @apiParam {String}   [qr_code]       Source String of the QR Code Image.
-     * @apiParam {Object[]} [components]    ID's from Components the place contains
-     * @apiParam {Object[]} [pictures]      ID's from pictures the place contains
-     * @apiParam {Object}   [settings]      Optional settings object
+     * @apiParam {String}   host                ID of the user who is host.
+     * @apiParam {String}   qr_code_id          ID that is saved in QR Code.
+     * @apiParam {String}   [qr_code_key]       Key to download the picture.
+     * @apiParam {Object[]} [components]        ID's from components the place contains
+     * @apiParam {Object[]} [pictures]          ID's from pictures the place contains
+     * @apiParam {Object}   [settings]          Optional settings object
      * @apiParam {Boolean}  [settings.is_photo_upload_allowd=true]     Are users allowed to upload images to the place gallery.
-     * @apiParam {Boolean}  [settings.has_to_validate_gps=true]        Are user required to be at the geological location of the place.
+     * @apiParam {Boolean}  [settings.has_to_validate_gps=true]        Are users required to be at the geological location of the place.
      *
      * @apiParamExample {json} Request-Example:
      *{
      *           "title":"Example Place",
-     *           "title_picture":"quo1A2B3C",
+     *           "title_picture_key":"quo1A2B3C",
+     *           "description":"A example place description"
      *           "start":"yyyy-MM-dd'T'HH:mm:ss'Z",
      *           "end":"yyyy-MM-dd'T'HH:mm:ss'Z",
      *           "lat":1234,
@@ -78,7 +82,7 @@ places.route('/')
      *           },
      *           "host":"12345",
      *           "qr_code_id":"9A8B7C6D5F",
-     *           "qr_code":"quo9Z8Y7X",
+     *           "qr_code_key":"quo9Z8Y7X",
      *           "components":["1a2b3c4d5e6f7g8h9i10j11k"],
 	 *           "pictures":["1a2b3c4d5e6f7g8h9i10j11k"],
      *           "settings":{
@@ -91,38 +95,33 @@ places.route('/')
      *
      * */
     .post(function (req, res, next) {
+        var picture = new pictureModel(req.body);
+        var picture_id = picture._id;
 
-        var place = new placeModel(req.body);
-        var host_id = req.body.host;
-
-        place.validate(function(err) {
+        placeModel.findById(req.params.id, function (err, place) {
             if (err) {
                 err = new HttpError(err.message, codes.wrongrequest);
                 next(err);
             } else {
-                userModel.findById(host_id, function (err, user) {
+                var picture_array = place.pictures;
+                picture_array.push(picture_id);
+                placeModel.findByIdAndUpdate(req.params.id, {$set: {pictures: picture_array}}, { runValidators: true , new: true}, function (err) {
                     if (err) {
-                        err = new HttpError(err.message, codes.wrongrequest);
                         next(err);
                     } else {
-                        var hosted_array = user.hosted_places;
-                        hosted_array.push(place._id);
-                        userModel.findByIdAndUpdate(host_id, {$set: {hosted_places: hosted_array}}, {
-                            runValidators: true,
-                            new: true
-                        }, function (err) {
+                        picture.save(function (err) {
                             if (err) {
-                                next(err);
-                            } else {
-                                place.save(function (err) {
-                                    if (err) {
-                                        return next(err);
-                                    }
-                                    res.locals.processed = true;
+                                return next(err);
+                            }
+                            res.locals.processed = true;
 
-            res.locals.items = place;
-            res.status(codes.created);
-            next();
+                            res.locals.items = picture;
+                            res.status(codes.created);
+                            next();
+                        });
+                    }
+                })
+            }
         });
     })
 
@@ -133,18 +132,41 @@ places.route('/')
             var err = new HttpError('this method is not allowed at ' + req.originalUrl, codes.wrongmethod);
             next(err);
         }
-    });
+    })
 
 places.route('/:id')
 
     /**
-     * @api {get} /places/:id Request place information's
+     * @api {get} /places/:id Get a single place
      * @apiName GetPlace
+     * @apiVersion 0.1.0
      * @apiGroup Place
      *
      * @apiParam {String} id Unique Place-ID
      *
-     * @apiSuccess {Object} place  Requested place Object.
+     * @apiSuccessExample {json} Success-Response:
+     * {
+     *   "_id": "12345",
+     *   "updatedAt": "yyyy-MM-dd'T'HH:mm:ss'Z",
+     *   "timestamp": "yyyy-MM-dd'T'HH:mm:ss'Z",
+     *   "host": "87654",
+     *   "title": "Example Place",
+     *   "lat": 42,
+     *   "long": 42,
+     *   "qr_code_id": "378fz38rvh38rg",
+     *   "qr_code_key": "quo1c2v3b4n"
+     *   "title_picture_key": "quo5t6z7u8i",
+     *   "description": "Schockt",
+     *   "__v": 0,
+     *   "settings": {
+     *       "has_to_validate_gps": true,
+     *       "is_photo_upload_allowed": true
+     *   },
+     *   "pictures": [],
+     *   "components": [],
+     *   "start": "yyyy-MM-dd'T'HH:mm:ss'Z",
+     *   "end": "yyyy-MM-dd'T'HH:mm:ss'Z"
+     * }
      *
      * */
     .get(function (req, res, next) {
@@ -160,36 +182,39 @@ places.route('/:id')
         });
     })
 
-
     /**
      * @api {put} /places/:id Modifiy a place
      * @apiName PutPlace
+     * @apiVersion 0.1.0
      * @apiGroup Place
      *
-     * @apiParam {String}   id              Unique Place ID of the place you want to change
-     * @apiParam {String}   title           Required title of the Place.
-     * @apiParam {String}   title_picture   ID of the title picture.
-     * @apiParam {Date}     [start=Now]     Optional start date.
-     * @apiParam {Date}     [end]           Optional end date.
-     * @apiParam {Number}   lat             Required latitude value.
-     * @apiParam {Number}   long            Required longitude value.
-     * @apiParam {Object}   [address]       Optional address object.
+     * @apiParam {String}    _id              ID of the place you want to modifiy.
+     * @apiParam {String}   [title]           Required title of the Place.
+     * @apiParam {String}   [title_picture_key]   Key to download the picture.
+     * @apiParam {String}   [description]         Short description.
+     * @apiParam {Date}     [start=Now]         Optional start date.
+     * @apiParam {Date}     [end]               Optional end date.
+     * @apiParam {Number}   [lat]                 Required latitude value.
+     * @apiParam {Number}   [long]                Required longitude value.
+     * @apiParam {Object}   [address]           Optional address object.
      * @apiParam {String}   [address.street]    Optional address Street.
      * @apiParam {String}   [address.city]      Optional address city.
      * @apiParam {Number}   [address.zip_code]  Optional address zip code.
-     * @apiParam {String}   host            ID of the user who is host.
-     * @apiParam {String}   qr_code_id      ID that is saved in QR Code.
-     * @apiParam {String}   [qr_code]       Source String of the QR Code Image.
-     * @apiParam {Object[]} [components]    ID's from Components the place contains
-     * @apiParam {Object[]} [pictures]      ID's from pictures the place contains
-     * @apiParam {Object}   [settings]      Optional settings object
+     * @apiParam {String}   [host]                ID of the user who is host.
+     * @apiParam {String}   [qr_code_id          ID that is saved in QR Code.
+     * @apiParam {String}   [qr_code_key]       Key to download the picture.
+     * @apiParam {Object[]} [components]        ID's from Components the place contains
+     * @apiParam {Object[]} [pictures]          ID's from pictures the place contains
+     * @apiParam {Object}   [settings]          Optional settings object
      * @apiParam {Boolean}  [settings.is_photo_upload_allowd=true]     Are users allowed to upload images to the place gallery.
-     * @apiParam {Boolean}  [settings.has_to_validate_gps=true]        Are user required to be at the geological location of the place.
+     * @apiParam {Boolean}  [settings.has_to_validate_gps=true]        Are users required to be at the geological location of the place.
      *
      * @apiParamExample {json} Request-Example:
      *{
+     *           "_id":"12345",
      *           "title":"Other Place",
-     *           "title_picture":"quo1A2B3C",
+     *           "title_picture_key":"quo1A2B3C",
+     *           "description":"Other description",
      *           "start":"yyyy-MM-dd'T'HH:mm:ss'Z",
      *           "end":"yyyy-MM-dd'T'HH:mm:ss'Z",
      *           "lat":4321,
@@ -201,7 +226,7 @@ places.route('/:id')
      *           },
      *           "host":"54321",
      *           "qr_code_id":"9A8B7C6D5F",
-     *           "qr_code":"quo9Z8Y7X",
+     *           "qr_code_key":"quo9Z8Y7X",
      *           "components":["1a2b3c4d5e6f7g8h9i10j11k"],
 	 *           "pictures":["1a2b3c4d5e6f7g8h9i10j11k"],
      *           "settings":{
@@ -235,8 +260,9 @@ places.route('/:id')
     })
 
     /**
-     * @api {delete} /places/:id Delete place object
+     * @api {delete} /places/:id Delete a place
      * @apiName DeletePlace
+     * @apiVersion 0.1.0
      * @apiGroup Place
      *
      * @apiParam {String} id  Unique ID of the place you want to delete
@@ -267,10 +293,10 @@ places.route('/:id')
 
 places.route('/:id/components')
 
-
     /**
-     * @api {get} /places/:id/components Request all component objects
+     * @api {get} /places/:id/components Get all component objects
      * @apiName GetPlaceComponents
+     * @apiVersion 0.1.0
      * @apiGroup Place
      *
      * @apiParam {String} id  Unique ID of the place
@@ -290,55 +316,26 @@ places.route('/:id/components')
             }
         })
     })
+
     /**
-     * @api {post} /places/:id/components Create a new Component
-     * @apiName PostPlace
+     * @api {post} /places/:id/components Create a new component
+     * @apiName PostPlaceComponent
+     * @apiVersion 0.1.0
      * @apiGroup Place
      *
-     * @apiParam {String}   title           Required title of the Place.
-     * @apiParam {String}   title_picture   ID of the title picture.
-     * @apiParam {Date}     [start=Now]     Optional start date.
-     * @apiParam {Date}     [end]           Optional end date.
-     * @apiParam {Number}   lat             Required latitude value.
-     * @apiParam {Number}   long            Required longitude value.
-     * @apiParam {Object}   [address]       Optional address object.
-     * @apiParam {String}   [address.street]    Optional address Street.
-     * @apiParam {String}   [address.city]      Optional address city.
-     * @apiParam {Number}   [address.zip_code]  Optional address zip code.
-     * @apiParam {String}   host            ID of the user who is host.
-     * @apiParam {String}   qr_code_id      ID that is saved in QR Code.
-     * @apiParam {String}   [qr_code]       Source String of the QR Code Image.
-     * @apiParam {Object[]} [components]    ID's from Components the place contains
-     * @apiParam {Object[]} [pictures]      ID's from pictures the place contains
-     * @apiParam {Object}   [settings]      Optional settings object
-     * @apiParam {Boolean}  [settings.is_photo_upload_allowd=true]     Are users allowed to upload images to the place gallery.
-     * @apiParam {Boolean}  [settings.has_to_validate_gps=true]        Are user required to be at the geological location of the place.
+     * @apiParam {Number} position              Position of the component.
+     * @apiParam {String} [text=null]           Components can have text OR picture.
+     * @apiParam {String} [picture_key=null]    Components can have text OR picture.
+     *
      *
      * @apiParamExample {json} Request-Example:
      *{
-     *           "title":"Example Place",
-     *           "title_picture":"quo1A2B3C",
-     *           "start":"yyyy-MM-dd'T'HH:mm:ss'Z",
-     *           "end":"yyyy-MM-dd'T'HH:mm:ss'Z",
-     *           "lat":1234,
-     *           "long":4321,
-     *           "address":{
-     *               "street":"Example Street 42",
-     *               "city":"Examplecity",
-     *               "zip-code":"12345"
-     *           },
-     *           "host":"12345",
-     *           "qr_code_id":"9A8B7C6D5F",
-     *           "qr_code":"quo9Z8Y7X",
-     *           "components":["1a2b3c4d5e6f7g8h9i10j11k"],
-	 *           "pictures":["1a2b3c4d5e6f7g8h9i10j11k"],
-     *           "settings":{
-     *               "is_photo_upload_allowed":true,
-     *               "has_to_validate_gps":true
-     *           }
+     *           "position":"1",
+     *           "text":"Example Text",
+     *           "picture_key":"quo12345",
      *  }
      *
-     * @apiSuccess {Object} place  Place object that was created.
+     * @apiSuccess {Object} component  Component object that was created and added to the place.
      *
      * */
     .post(function (req, res, next) {
@@ -371,6 +368,7 @@ places.route('/:id/components')
             }
         });
     })
+
     .all(function(req, res, next) {
         if (res.locals.processed) {
             next();
@@ -384,8 +382,9 @@ places.route('/:id/components')
 places.route('/:id/pictures')
 
     /**
-     * @api {get} /places/:id/pictures Request all picture objects
+     * @api {get} /places/:id/pictures Get all picture objects
      * @apiName GetPlacePictures
+     * @apiVersion 0.1.0
      * @apiGroup Place
      *
      * @apiParam {String} id  Unique ID of the place
@@ -405,6 +404,29 @@ places.route('/:id/pictures')
             }
         })
     })
+
+    /**
+     * @api {post} /places/:id/pictures Create a new picture
+     * @apiName PostPlacePicture
+     * @apiVersion 0.1.0
+     * @apiGroup Place
+     *
+     * @apiParam {String} src_key               Key to download the picture.
+     * @apiParam {String} place                 ID of the place.
+     * @apiParam {String} owner                 ID of the user who is owner.
+     * @apiParam {Boolean} [is_visible=true]    Is the place visible.
+     *
+     * @apiParamExample {json} Request-Example:
+     * {
+     *      "src_key":"quo1234",
+     *      "place":"12345",
+     *      "owner":"54321",
+     *      "is_visible":true
+     * }
+     *
+     * @apiSuccess {Object} picture  Picture object that was created and added to the place.
+
+     * */
     .post(function (req, res, next) {
         var picture = new pictureModel(req.body);
         var picture_id = picture._id;
@@ -435,6 +457,7 @@ places.route('/:id/pictures')
             }
         });
     })
+
     .all(function(req, res, next) {
         if (res.locals.processed) {
             next();
@@ -447,18 +470,14 @@ places.route('/:id/pictures')
 
 places.route('/qrcode/:qr_code_id/:user_id')
 
-    .get(function(req, res,next) {
-
-        var user_id = req.params.user_id;
-
-        placeModel.findOne({'qr_code_id': req.params.qr_code_id}, function (err, place) {
-places.route('/qrcode/:id')
     /**
-     * @api {get} /places/qrcode/:id Request the place with the QR Code
+     * @api {get} /places/:qr_code_id/:user_id Get the place with the QR Code
      * @apiName GetPlaceQRcode
+     * @apiVersion 0.1.0
      * @apiGroup Place
      *
-     * @apiParam {String} id  ID the QR Code contains
+     * @apiParam {String} qr_code_id  ID the QR Code contains
+     * @apiParam {String} user_id     ID of the user who scans the QR Code
      *
      * @apiSuccess {Object} Place  The requested place object
      *

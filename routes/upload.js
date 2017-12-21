@@ -29,6 +29,17 @@ var upload = express.Router();
 
 upload.route('/')
 
+    /**
+     * @api {post} /upload Upload a new image
+     * @apiName UploadFile
+     * @apiVersion 0.1.0
+     * @apiGroup Upload
+     *
+     * @apiParam {File} imgUpload     File you want to upload.
+     * @apiHeader {String} Content-Type Required to be multipart/form-data
+     *
+     * @apiSuccess {String} key  The unique image key.
+     * */
     .post(function (req, res, next) {
 
         //to save local in /images
@@ -81,6 +92,17 @@ upload.route('/')
     });
 
 upload.route('/:key')
+
+    /**
+     * @api {get} /upload/:key Download a image
+     * @apiName DownloadFile
+     * @apiVersion 0.1.0
+     * @apiGroup Upload
+     *
+     * @apiParam {String} key     Unique key of the file.
+     *
+     * @apiSuccess {String} path  Presigned URL to the File, available for 90 Days.
+     * */
     .get(function (req, res, next) {
         var params = {
             Bucket: "quo-picture-bucket",
