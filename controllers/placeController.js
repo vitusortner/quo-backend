@@ -267,9 +267,10 @@ exports.readByQrCodeIdAndAddToVisitedPlaces = function (req, res, next) {
                     }
                     res.locals.items = place;
                     res.locals.processed = true;
-                    next();
+                    return next();
                 })
             }
+            return next();
         });
     });
 };
