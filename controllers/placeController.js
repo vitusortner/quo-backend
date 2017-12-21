@@ -9,15 +9,15 @@
 "use strict";
 
 // modules
-var codes = require('../restapi/http-codes');
-var HttpError = require('../restapi/http-error.js');
-var placeModel = require('../models/place');
-var userModel = require('../models/user');
-var mongoose = require('mongoose');
-var componentSchema = require('../models/component');
-var pictureSchema = require('../models/picture');
-var componentModel = mongoose.model('Component', componentSchema);
-var pictureModel = mongoose.model('Picture', pictureSchema);
+const codes = require('../restapi/http-codes'),
+    HttpError = require('../restapi/http-error.js'),
+    placeModel = require('../models/place'),
+    userModel = require('../models/user'),
+    mongoose = require('mongoose'),
+    componentSchema = require('../models/component'),
+    pictureSchema = require('../models/picture'),
+    componentModel = mongoose.model('Component', componentSchema),
+    pictureModel = mongoose.model('Picture', pictureSchema);
 
 exports.readAll = function (req, res, next) {
     placeModel.find({}, function (err, items) {
@@ -48,10 +48,16 @@ exports.createAndAddToHostedPlaces = function (req, res, next) {
             }
             let hosted_array = user.hosted_places;
             hosted_array.push(place._id);
-            userModel.findByIdAndUpdate(host_id, {$set: {hosted_places: hosted_array}}, {
+            const set = {
+                $set: {
+                    hosted_places: hosted_array
+                }
+            };
+            const validateOptions = {
                 runValidators: true,
                 new: true
-            }, function (err) {
+            };
+            userModel.findByIdAndUpdate(host_id, set, validateOptions, function (err) {
                 if (err) {
                     return next(err);
                 }
@@ -136,10 +142,16 @@ exports.createComponent = function (req, res, next) {
         }
         let components_array = place.components;
         components_array.push(component_id);
-        placeModel.findByIdAndUpdate(req.params.id, {$set: {components: components_array}}, {
+        const set = {
+            $set: {
+                components: components_array
+            }
+        };
+        const validateOptions = {
             runValidators: true,
             new: true
-        }, function (err) {
+        };
+        placeModel.findByIdAndUpdate(req.params.id, set, validateOptions, function (err) {
             if (err) {
                 return next(err);
             }
@@ -181,10 +193,16 @@ exports.createPicture = function (req, res, next) {
         }
         let picture_array = place.pictures;
         picture_array.push(picture_id);
-        placeModel.findByIdAndUpdate(req.params.id, {$set: {pictures: picture_array}}, {
+        const set = {
+            $set: {
+                pictures: picture_array
+            }
+        };
+        const validateOptions = {
             runValidators: true,
             new: true
-        }, function (err) {
+        };
+        placeModel.findByIdAndUpdate(req.params.id, set, validateOptions, function (err) {
             if (err) {
                 return next(err);
             }
@@ -233,10 +251,16 @@ exports.readByQrCodeIdAndAddToVisitedPlaces = function (req, res, next) {
             });
             if (isNew) {
                 visited_array.push(new_place);
-                userModel.findByIdAndUpdate(user_id, {$set: {visited_places: visited_array}}, {
+                const set = {
+                    $set: {
+                        visited_places: visited_array
+                    }
+                };
+                const validateOptions = {
                     runValidators: true,
                     new: true
-                }, function (err) {
+                };
+                userModel.findByIdAndUpdate(user_id, set, validateOptions, function (err) {
                     if (err) {
                         err = new HttpError(err.message, codes.wrongrequest);
                         return next(err);

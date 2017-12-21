@@ -7,8 +7,8 @@
  */
 
 // modules
-var codes = require('../restapi/http-codes');
-var HttpError = require('../restapi/http-error.js');
+const codes = require('../restapi/http-codes'),
+    HttpError = require('../restapi/http-error.js');
 
 exports.methodNotAllowed = function (req, res, next) {
     if (res.locals.processed) {
@@ -33,5 +33,3 @@ exports.sendToClient = function (req, res, next) {
         next(); // will result in a 404 from app.js
     }
 };
-
-//TODO populate what and where

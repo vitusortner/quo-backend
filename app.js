@@ -6,32 +6,26 @@
 */
 "use strict";
 
-var express = require('express');
-var bodyParser = require('body-parser');
-var debug = require('debug');
-var morgan = require('morgan');
-var validator = require('validator');
-var express = require('express'),
+const express = require('express'),
+    bodyParser = require('body-parser'),
+    debug = require('debug'),
+    morgan = require('morgan'),
+    validator = require('validator'),
     mongoose = require('mongoose'),
     restful = require('node-restful'),
     multer = require('multer');
 
-
 //own modules/routes
-var restAPIchecks = require('./restapi/request-checks');
-var errorResponseWare = require('./restapi/error-response');
-var HttpError = require('./restapi/http-error');
-
-var users = require('./routes/users');
-var pictures = require('./routes/pictures');
-var places = require('./routes/places');
-var component = require('./routes/components');
-var upload = require('./routes/upload');
-
-
+const restAPIchecks = require('./restapi/request-checks'),
+    errorResponseWare = require('./restapi/error-response'),
+    HttpError = require('./restapi/http-error'),
+    users = require('./routes/users'),
+    places = require('./routes/places'),
+    upload = require('./routes/upload'),
+    controller = require('./controllers/controller');
 
 // app creation
-var app = express();
+const app = express();
 
 //Middleware
 app.use(bodyParser.json());
@@ -49,24 +43,27 @@ app.use('/upload', upload);
 app.use('/places', places);
 app.use('/users', users);
 
-var PictureSchema = require('./models/picture'),
+const PictureSchema = require('./models/picture'),
     ComponentSchema = require('./models/component');
 
-var picture = restful.model('pictures', PictureSchema)
+const picture = restful.model('pictures', PictureSchema)
     .methods(['get', 'put', 'delete']);
 
-var component = restful.model('components', ComponentSchema)
+const component = restful.model('components', ComponentSchema)
     .methods(['get', 'put', 'delete']);
 
 picture.register(app, '/pictures');
 component.register(app, '/components');
+
+app.use(controller.methodNotAllowed);
+app.use(controller.sendToClient);
 
 // (from express-generator boilerplate  standard code)
 // Errorhandling and requests without proper URLs ************************
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
     console.log('Catching unmatched request to answer with 404');
-    var err = new HttpError('Not Found', 404);
+    const err = new HttpError('Not Found', 404);
     next(err);
 });
 

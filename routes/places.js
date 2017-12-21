@@ -7,11 +7,10 @@
  */
 
 // modules
-var express = require('express');
-var placeController= require('../controllers/placeController');
-var controller = require('../controllers/controller');
+const express = require('express'),
+    placeController= require('../controllers/placeController');
 
-var places = express.Router();
+const places = express.Router();
 
 places.route('/')
     .get(placeController.readAll)
@@ -33,7 +32,6 @@ places.route('/:id/pictures')
 places.route('/qrcode/:qr_code_id/:user_id')
     .get(placeController.readByQrCodeIdAndAddToVisitedPlaces);
 
-places.use(controller.methodNotAllowed);
-places.use(controller.sendToClient);
+
 
 module.exports = places;

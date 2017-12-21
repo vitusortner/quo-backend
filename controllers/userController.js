@@ -9,11 +9,11 @@
 "use strict";
 
 // modules
-var codes = require('../restapi/http-codes');
-var HttpError = require('../restapi/http-error.js');
-var userModel = require('../models/user');
+const codes = require('../restapi/http-codes'),
+    HttpError = require('../restapi/http-error.js'),
+    userModel = require('../models/user');
 
-exports.readAll = function(req, res, next) {
+exports.readAll = function (req, res, next) {
     userModel.find({}, function (err, items) {
         if (err) {
             err = new HttpError(err.message, codes.wrongrequest);

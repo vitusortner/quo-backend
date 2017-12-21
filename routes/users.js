@@ -7,11 +7,10 @@
  */
 
 // modules
-var express = require('express');
-var userController = require('../controllers/userController');
-var controller = require('../controllers/controller');
+const express = require('express'),
+    userController = require('../controllers/userController');
 
-var users = express.Router();
+const users = express.Router();
 
 users.route('/')
     .get(userController.readAll)
@@ -27,8 +26,5 @@ users.route('/:id/visited_places')
 
 users.route('/:id/hosted_places')
     .get(userController.populateHostedPlaces);
-
-users.use(controller.methodNotAllowed);
-users.use(controller.sendToClient);
 
 module.exports = users;
