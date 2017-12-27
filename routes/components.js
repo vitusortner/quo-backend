@@ -45,7 +45,7 @@ components.route('/:id')
         "type": "Text",
         "position": 1,
         "__v": 0,
-        "picture_key": "quo1Q2W3E4R",
+        "picture": "www.s3.com",
         "text": "Example Text"
  },
  *
@@ -60,7 +60,7 @@ components.route('/:id')
  * @apiParam {String}  _id                  ID of the component
  * @apiParam {Number} [position]            Position of the component.
  * @apiParam {String} [text=null]           Components can have text OR picture.
- * @apiParam {String} [picture_key=null]    Components can have text OR picture.
+ * @apiParam {String} [picture=null]    Components can have text OR picture.
  *
  *
  * @apiParamExample {json} Request-Example:
@@ -68,7 +68,7 @@ components.route('/:id')
  *           "_id":"876543",
  *           "position":"1",
  *           "text":"Example Text",
- *           "picture_key":"quo12345",
+ *           "picture":"www.s3.com",
  * }
  *
  * @apiSuccess {Object} component  Component object that was created and added to the place.

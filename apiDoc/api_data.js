@@ -46,7 +46,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "{\n        \"_id\": \"12345\",\n        \"updatedAt\": \"yyyy-MM-dd'T'HH:mm:ss'Z\",\n        \"timestamp\": \"yyyy-MM-dd'T'HH:mm:ss'Z\",\n        \"type\": \"Text\",\n        \"position\": 1,\n        \"__v\": 0,\n        \"picture_key\": \"quo1Q2W3E4R\",\n        \"text\": \"Example Text\"\n },",
+          "content": "{\n        \"_id\": \"12345\",\n        \"updatedAt\": \"yyyy-MM-dd'T'HH:mm:ss'Z\",\n        \"timestamp\": \"yyyy-MM-dd'T'HH:mm:ss'Z\",\n        \"type\": \"Text\",\n        \"position\": 1,\n        \"__v\": 0,\n        \"picture\": \"www.s3.com\",\n        \"text\": \"Example Text\"\n },",
           "type": "json"
         }
       ]
@@ -90,7 +90,7 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": true,
-            "field": "picture_key",
+            "field": "picture",
             "defaultValue": "null",
             "description": "<p>Components can have text OR picture.</p>"
           }
@@ -99,7 +99,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Request-Example:",
-          "content": "{\n          \"_id\":\"876543\",\n          \"position\":\"1\",\n          \"text\":\"Example Text\",\n          \"picture_key\":\"quo12345\",\n}",
+          "content": "{\n          \"_id\":\"876543\",\n          \"position\":\"1\",\n          \"text\":\"Example Text\",\n          \"picture\":\"www.s3.com\",\n}",
           "type": "json"
         }
       ]
@@ -167,7 +167,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "{\n      \"_id\": \"123456\",\n      \"updatedAt\": \"yyyy-MM-dd'T'HH:mm:ss'Z\",\n      \"timestamp\": \"yyyy-MM-dd'T'HH:mm:ss'Z\",\n      \"src_key\": \"quo1A2S3D4F\",\n      \"owner\": \"987655\",\n      \"place\": \"234567\",\n      \"__v\": 0,\n      \"is_visible\": true\n}",
+          "content": "{\n      \"_id\": \"123456\",\n      \"updatedAt\": \"yyyy-MM-dd'T'HH:mm:ss'Z\",\n      \"timestamp\": \"yyyy-MM-dd'T'HH:mm:ss'Z\",\n      \"src\": \"www.s3.com\",\n      \"owner\": \"987655\",\n      \"place\": \"234567\",\n      \"__v\": 0,\n      \"is_visible\": true\n}",
           "type": "json"
         }
       ]
@@ -196,8 +196,8 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": true,
-            "field": "src_key",
-            "description": "<p>Key to download the picture.</p>"
+            "field": "src",
+            "description": "<p>URL to the file.</p>"
           },
           {
             "group": "Parameter",
@@ -226,7 +226,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Request-Example:",
-          "content": "{\n     \"_id\":\"98765\",\n     \"src_key\":\"quo1234\",\n     \"place\":\"12345\",\n     \"owner\":\"54321\",\n     \"is_visible\":true\n}",
+          "content": "{\n     \"_id\":\"98765\",\n     \"src\":\"quo1234\",\n     \"place\":\"12345\",\n     \"owner\":\"54321\",\n     \"is_visible\":true\n}",
           "type": "json"
         }
       ]
@@ -294,7 +294,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "{\n  \"_id\": \"12345\",\n  \"updatedAt\": \"yyyy-MM-dd'T'HH:mm:ss'Z\",\n  \"timestamp\": \"yyyy-MM-dd'T'HH:mm:ss'Z\",\n  \"host\": \"87654\",\n  \"title\": \"Example Place\",\n  \"lat\": 42,\n  \"long\": 42,\n  \"qr_code_id\": \"378fz38rvh38rg\",\n  \"qr_code_key\": \"quo1c2v3b4n\"\n  \"title_picture_key\": \"quo5t6z7u8i\",\n  \"description\": \"Schockt\",\n  \"__v\": 0,\n  \"settings\": {\n      \"has_to_validate_gps\": true,\n      \"is_photo_upload_allowed\": true\n  },\n  \"pictures\": [],\n  \"components\": [],\n  \"start\": \"yyyy-MM-dd'T'HH:mm:ss'Z\",\n  \"end\": \"yyyy-MM-dd'T'HH:mm:ss'Z\"\n}",
+          "content": "{\n  \"_id\": \"12345\",\n  \"updatedAt\": \"yyyy-MM-dd'T'HH:mm:ss'Z\",\n  \"timestamp\": \"yyyy-MM-dd'T'HH:mm:ss'Z\",\n  \"host\": \"87654\",\n  \"title\": \"Example Place\",\n  \"lat\": 42,\n  \"long\": 42,\n  \"qr_code_id\": \"378fz38rvh38rg\",\n  \"qr_code\": \"www.s3.com\"\n  \"title_picture\": \"www.s3.com\",\n  \"description\": \"Schockt\",\n  \"__v\": 0,\n  \"settings\": {\n      \"has_to_validate_gps\": true,\n      \"is_photo_upload_allowed\": true\n  },\n  \"pictures\": [],\n  \"components\": [],\n  \"start\": \"yyyy-MM-dd'T'HH:mm:ss'Z\",\n  \"end\": \"yyyy-MM-dd'T'HH:mm:ss'Z\"\n}",
           "type": "json"
         }
       ]
@@ -461,8 +461,8 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "title_picture_key",
-            "description": "<p>Key to download the picture.</p>"
+            "field": "title_picture",
+            "description": "<p>URL to the file.</p>"
           },
           {
             "group": "Parameter",
@@ -546,8 +546,8 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": true,
-            "field": "qr_code_key",
-            "description": "<p>Key to download the picture.</p>"
+            "field": "qr_code",
+            "description": "<p>URL to the file.</p>"
           },
           {
             "group": "Parameter",
@@ -591,7 +591,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Request-Example:",
-          "content": "{\n          \"title\":\"Example Place\",\n          \"title_picture_key\":\"quo1A2B3C\",\n          \"description\":\"A example place description\"\n          \"start\":\"yyyy-MM-dd'T'HH:mm:ss'Z\",\n          \"end\":\"yyyy-MM-dd'T'HH:mm:ss'Z\",\n          \"lat\":1234,\n          \"long\":4321,\n          \"address\":{\n              \"street\":\"Example Street 42\",\n              \"city\":\"Examplecity\",\n              \"zip-code\":\"12345\"\n          },\n          \"host\":\"12345\",\n          \"qr_code_id\":\"9A8B7C6D5F\",\n          \"qr_code_key\":\"quo9Z8Y7X\",\n          \"components\":[\"1a2b3c4d5e6f7g8h9i10j11k\"],\n          \"pictures\":[\"1a2b3c4d5e6f7g8h9i10j11k\"],\n          \"settings\":{\n              \"is_photo_upload_allowed\":true,\n              \"has_to_validate_gps\":true\n          }\n }",
+          "content": "{\n          \"title\":\"Example Place\",\n          \"title_picture\":\"www.s3.com\",\n          \"description\":\"A example place description\"\n          \"start\":\"yyyy-MM-dd'T'HH:mm:ss'Z\",\n          \"end\":\"yyyy-MM-dd'T'HH:mm:ss'Z\",\n          \"lat\":1234,\n          \"long\":4321,\n          \"address\":{\n              \"street\":\"Example Street 42\",\n              \"city\":\"Examplecity\",\n              \"zip-code\":\"12345\"\n          },\n          \"host\":\"12345\",\n          \"qr_code_id\":\"9A8B7C6D5F\",\n          \"qr_code\":\"www.s3.com\",\n          \"components\":[\"1a2b3c4d5e6f7g8h9i10j11k\"],\n          \"pictures\":[\"1a2b3c4d5e6f7g8h9i10j11k\"],\n          \"settings\":{\n              \"is_photo_upload_allowed\":true,\n              \"has_to_validate_gps\":true\n          }\n }",
           "type": "json"
         }
       ]
@@ -641,7 +641,7 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": true,
-            "field": "picture_key",
+            "field": "picture",
             "defaultValue": "null",
             "description": "<p>Components can have text OR picture.</p>"
           }
@@ -650,7 +650,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Request-Example:",
-          "content": "{\n          \"position\":\"1\",\n          \"text\":\"Example Text\",\n          \"picture_key\":\"quo12345\",\n }",
+          "content": "{\n          \"position\":\"1\",\n          \"text\":\"Example Text\",\n          \"picture\":\"www.s3.com\",\n }",
           "type": "json"
         }
       ]
@@ -685,8 +685,8 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "src_key",
-            "description": "<p>Key to download the picture.</p>"
+            "field": "src",
+            "description": "<p>URL to the file.</p>"
           },
           {
             "group": "Parameter",
@@ -715,7 +715,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Request-Example:",
-          "content": "{\n     \"src_key\":\"quo1234\",\n     \"place\":\"12345\",\n     \"owner\":\"54321\",\n     \"is_visible\":true\n}",
+          "content": "{\n     \"src\":\"www.s3.com\",\n     \"place\":\"12345\",\n     \"owner\":\"54321\",\n     \"is_visible\":true\n}",
           "type": "json"
         }
       ]
@@ -764,8 +764,8 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": true,
-            "field": "title_picture_key",
-            "description": "<p>Key to download the picture.</p>"
+            "field": "title_picture",
+            "description": "<p>URL to the file.</p>"
           },
           {
             "group": "Parameter",
@@ -849,8 +849,8 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": true,
-            "field": "qr_code_key",
-            "description": "<p>Key to download the picture.</p>"
+            "field": "qr_code",
+            "description": "<p>URL to the file.</p>"
           },
           {
             "group": "Parameter",
@@ -894,7 +894,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Request-Example:",
-          "content": "{\n          \"_id\":\"12345\",\n          \"title\":\"Other Place\",\n          \"title_picture_key\":\"quo1A2B3C\",\n          \"description\":\"Other description\",\n          \"start\":\"yyyy-MM-dd'T'HH:mm:ss'Z\",\n          \"end\":\"yyyy-MM-dd'T'HH:mm:ss'Z\",\n          \"lat\":4321,\n          \"long\":1234,\n          \"address\":{\n              \"street\":\"Other Street 42\",\n              \"city\":\"Othercity\",\n              \"zip-code\":\"54321\"\n          },\n          \"host\":\"54321\",\n          \"qr_code_id\":\"9A8B7C6D5F\",\n          \"qr_code_key\":\"quo9Z8Y7X\",\n          \"components\":[\"1a2b3c4d5e6f7g8h9i10j11k\"],\n          \"pictures\":[\"1a2b3c4d5e6f7g8h9i10j11k\"],\n          \"settings\":{\n              \"is_photo_upload_allowed\":true,\n              \"has_to_validate_gps\":true\n          }\n }",
+          "content": "{\n          \"_id\":\"12345\",\n          \"title\":\"Other Place\",\n          \"title_picture\":\"www.s3.com\",\n          \"description\":\"Other description\",\n          \"start\":\"yyyy-MM-dd'T'HH:mm:ss'Z\",\n          \"end\":\"yyyy-MM-dd'T'HH:mm:ss'Z\",\n          \"lat\":4321,\n          \"long\":1234,\n          \"address\":{\n              \"street\":\"Other Street 42\",\n              \"city\":\"Othercity\",\n              \"zip-code\":\"54321\"\n          },\n          \"host\":\"54321\",\n          \"qr_code_id\":\"9A8B7C6D5F\",\n          \"qr_code\":\"www.s3.com\",\n          \"components\":[\"1a2b3c4d5e6f7g8h9i10j11k\"],\n          \"pictures\":[\"1a2b3c4d5e6f7g8h9i10j11k\"],\n          \"settings\":{\n              \"is_photo_upload_allowed\":true,\n              \"has_to_validate_gps\":true\n          }\n }",
           "type": "json"
         }
       ]

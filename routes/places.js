@@ -47,7 +47,7 @@ places.route('/')
      * @apiGroup Place
      *
      * @apiParam {String}   title               Required title of the place.
-     * @apiParam {String}   title_picture_key   Key to download the picture.
+     * @apiParam {String}   title_picture       URL to the file.
      * @apiParam {String}   description         Short description.
      * @apiParam {Date}     [start=Now]         Optional start date.
      * @apiParam {Date}     [end]               Optional end date.
@@ -59,7 +59,7 @@ places.route('/')
      * @apiParam {Number}   [address.zip_code]  Optional address zip code.
      * @apiParam {String}   host                ID of the user who is host.
      * @apiParam {String}   qr_code_id          ID that is saved in QR Code.
-     * @apiParam {String}   [qr_code_key]       Key to download the picture.
+     * @apiParam {String}   [qr_code]           URL to the file.
      * @apiParam {Object[]} [components]        ID's from components the place contains
      * @apiParam {Object[]} [pictures]          ID's from pictures the place contains
      * @apiParam {Object}   [settings]          Optional settings object
@@ -69,7 +69,7 @@ places.route('/')
      * @apiParamExample {json} Request-Example:
      *{
      *           "title":"Example Place",
-     *           "title_picture_key":"quo1A2B3C",
+     *           "title_picture":"www.s3.com",
      *           "description":"A example place description"
      *           "start":"yyyy-MM-dd'T'HH:mm:ss'Z",
      *           "end":"yyyy-MM-dd'T'HH:mm:ss'Z",
@@ -82,7 +82,7 @@ places.route('/')
      *           },
      *           "host":"12345",
      *           "qr_code_id":"9A8B7C6D5F",
-     *           "qr_code_key":"quo9Z8Y7X",
+     *           "qr_code":"www.s3.com",
      *           "components":["1a2b3c4d5e6f7g8h9i10j11k"],
 	 *           "pictures":["1a2b3c4d5e6f7g8h9i10j11k"],
      *           "settings":{
@@ -154,8 +154,8 @@ places.route('/:id')
      *   "lat": 42,
      *   "long": 42,
      *   "qr_code_id": "378fz38rvh38rg",
-     *   "qr_code_key": "quo1c2v3b4n"
-     *   "title_picture_key": "quo5t6z7u8i",
+     *   "qr_code": "www.s3.com"
+     *   "title_picture": "www.s3.com",
      *   "description": "Schockt",
      *   "__v": 0,
      *   "settings": {
@@ -190,7 +190,7 @@ places.route('/:id')
      *
      * @apiParam {String}    _id              ID of the place you want to modifiy.
      * @apiParam {String}   [title]           Required title of the Place.
-     * @apiParam {String}   [title_picture_key]   Key to download the picture.
+     * @apiParam {String}   [title_picture]   URL to the file.
      * @apiParam {String}   [description]         Short description.
      * @apiParam {Date}     [start=Now]         Optional start date.
      * @apiParam {Date}     [end]               Optional end date.
@@ -202,7 +202,7 @@ places.route('/:id')
      * @apiParam {Number}   [address.zip_code]  Optional address zip code.
      * @apiParam {String}   [host]                ID of the user who is host.
      * @apiParam {String}   [qr_code_id          ID that is saved in QR Code.
-     * @apiParam {String}   [qr_code_key]       Key to download the picture.
+     * @apiParam {String}   [qr_code]       URL to the file.
      * @apiParam {Object[]} [components]        ID's from Components the place contains
      * @apiParam {Object[]} [pictures]          ID's from pictures the place contains
      * @apiParam {Object}   [settings]          Optional settings object
@@ -213,7 +213,7 @@ places.route('/:id')
      *{
      *           "_id":"12345",
      *           "title":"Other Place",
-     *           "title_picture_key":"quo1A2B3C",
+     *           "title_picture":"www.s3.com",
      *           "description":"Other description",
      *           "start":"yyyy-MM-dd'T'HH:mm:ss'Z",
      *           "end":"yyyy-MM-dd'T'HH:mm:ss'Z",
@@ -226,7 +226,7 @@ places.route('/:id')
      *           },
      *           "host":"54321",
      *           "qr_code_id":"9A8B7C6D5F",
-     *           "qr_code_key":"quo9Z8Y7X",
+     *           "qr_code":"www.s3.com",
      *           "components":["1a2b3c4d5e6f7g8h9i10j11k"],
 	 *           "pictures":["1a2b3c4d5e6f7g8h9i10j11k"],
      *           "settings":{
@@ -325,14 +325,14 @@ places.route('/:id/components')
      *
      * @apiParam {Number} position              Position of the component.
      * @apiParam {String} [text=null]           Components can have text OR picture.
-     * @apiParam {String} [picture_key=null]    Components can have text OR picture.
+     * @apiParam {String} [picture=null]        Components can have text OR picture.
      *
      *
      * @apiParamExample {json} Request-Example:
      *{
      *           "position":"1",
      *           "text":"Example Text",
-     *           "picture_key":"quo12345",
+     *           "picture":"www.s3.com",
      *  }
      *
      * @apiSuccess {Object} component  Component object that was created and added to the place.
@@ -411,14 +411,14 @@ places.route('/:id/pictures')
      * @apiVersion 0.1.0
      * @apiGroup Place
      *
-     * @apiParam {String} src_key               Key to download the picture.
+     * @apiParam {String} src                   URL to the file.
      * @apiParam {String} place                 ID of the place.
      * @apiParam {String} owner                 ID of the user who is owner.
      * @apiParam {Boolean} [is_visible=true]    Is the place visible.
      *
      * @apiParamExample {json} Request-Example:
      * {
-     *      "src_key":"quo1234",
+     *      "src":"www.s3.com",
      *      "place":"12345",
      *      "owner":"54321",
      *      "is_visible":true

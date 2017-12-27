@@ -43,7 +43,7 @@ pictures.route('/:id')
  *       "_id": "123456",
  *       "updatedAt": "yyyy-MM-dd'T'HH:mm:ss'Z",
  *       "timestamp": "yyyy-MM-dd'T'HH:mm:ss'Z",
- *       "src_key": "quo1A2S3D4F",
+ *       "src": "www.s3.com",
  *       "owner": "987655",
  *       "place": "234567",
  *       "__v": 0,
@@ -58,16 +58,16 @@ pictures.route('/:id')
  * @apiVersion 0.1.0
  * @apiGroup Picture
  *
- * @apiParam {String} _id           ID of the picture.
- * @apiParam {String} [src_key]       Key to download the picture.
- * @apiParam {String} [place]         ID of the place the picture is in.
- * @apiParam {String} [owner]         ID of the user who is owner.
- * @apiParam {Boolean} [is_visible=true]   Is the place visible.
+ * @apiParam {String} _id                   ID of the picture.
+ * @apiParam {String} [src]                 URL to the file.
+ * @apiParam {String} [place]               ID of the place the picture is in.
+ * @apiParam {String} [owner]               ID of the user who is owner.
+ * @apiParam {Boolean} [is_visible=true]    Is the place visible.
  *
  * @apiParamExample {json} Request-Example:
  * {
  *      "_id":"98765",
- *      "src_key":"quo1234",
+ *      "src":"quo1234",
  *      "place":"12345",
  *      "owner":"54321",
  *      "is_visible":true
