@@ -64,7 +64,8 @@ upload.route('/')
                 return next(err);
             }
             res.locals.processed = true;
-            res.locals.items = {"key":key};
+            const path= "https://s3.eu-central-1.amazonaws.com/quo-picture-bucket/"+ key;
+            res.locals.items = {"path":path};
             res.status(codes.created);
             next();
         });
@@ -81,11 +82,13 @@ upload.route('/')
 
 upload.route('/:key')
     .get(function (req, res, next) {
-        const path = s3.getSignedUrl('getObject', {
+       /* const path = s3.getSignedUrl('getObject', {
             Bucket: "quo-picture-bucket",
             Key: req.params.key,
             Expires: 7760000 //90 days
-        });
+        });*/
+
+       const path = "https://s3.eu-central-1.amazonaws.com/quo-picture-bucket/"+ req.params.key;
 
         res.locals.items = {"path": path};
         res.locals.processed = true;
