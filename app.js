@@ -47,7 +47,7 @@ app.use('/auth', auth);
 
 
 // use passport jwt strategy for all following routes
-app.all(['/upload', '/places', '/users', '/pictures', '/components'], passport.authenticate('jwt', { session: false }));
+app.all(['/upload/*', '/places/*', '/users/*', '/pictures/*', '/components/*'], passport.authenticate('jwt', { session: false }));
 
 app.use('/upload', upload);
 app.use('/places', places);
