@@ -37,7 +37,7 @@ exports.create = function (req, res, next) {
             },
             key: function (req, file, cb) {
                 key = 'quo' + bcrypt.hashSync(Date.now());
-                key.replace("/","#");
+                key = key.replace(/\\/g, "#");
                 cb(null, path.basename(key));
             }
         })
