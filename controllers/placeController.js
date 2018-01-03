@@ -270,6 +270,8 @@ exports.readByQrCodeIdAndAddToVisitedPlaces = function (req, res, next) {
                     return next();
                 })
             }
+            res.locals.items = place;
+            res.locals.processed = true;
             return next();
         });
     });
