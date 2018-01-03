@@ -13,8 +13,7 @@ const express = require('express'),
 const users = express.Router();
 
 users.route('/')
-    .get(userController.readAll)
-    .post(userController.create);
+    .get(userController.readAll);
 
 users.route('/:id')
     .get(userController.readById)

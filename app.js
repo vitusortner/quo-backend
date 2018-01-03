@@ -16,6 +16,8 @@ const express = require('express'),
 const restAPIchecks = require('./restapi/request-checks'),
     errorResponseWare = require('./restapi/error-response'),
     HttpError = require('./restapi/http-error'),
+    config = require('./config/main'),
+    auth = require('./routes/auth'),
     users = require('./routes/users'),
     places = require('./routes/places'),
     upload = require('./routes/upload'),
@@ -26,6 +28,8 @@ const app = express();
 
 //Middleware
 app.use(bodyParser.json());
+app.use(passport.initialize());
+const passportService = require('./config/passport');
 
 // logging
 app.use(morgan('dev'));
@@ -34,7 +38,12 @@ app.use(morgan('dev'));
 app.use(restAPIchecks);
 
 // Routes
-mongoose.connect('mongodb://localhost:27017/quo');
+mongoose.connect(config.database);
+
+app.use('/auth', auth);
+
+// use passport jwt strategy for all following routes
+app.all('*', passport.authenticate('jwt', { session: false }));
 
 app.use('/upload', upload);
 app.use('/places', places);
@@ -60,7 +69,7 @@ app.use(controller.sendToClient);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
     console.log('Catching unmatched request to answer with 404');
-    const err = new HttpError('Not Found', 404);
+    const err = new HttpError('Not Found', codes.notfound);
     next(err);
 });
 
@@ -68,11 +77,11 @@ app.use(function (req, res, next) {
 errorResponseWare(app);
 
 // Start server ****************************
-app.listen(3000, function (err) {
+app.listen(config.port, function (err) {
     if (err !== undefined) {
         console.log('Error on startup, ', err);
     }
     else {
-        console.log('Listening on port 3000');
+        console.log('Listening on port ' + config.port);
     }
 });
