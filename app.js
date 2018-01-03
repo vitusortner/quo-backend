@@ -21,7 +21,8 @@ const restAPIchecks = require('./restapi/request-checks'),
     users = require('./routes/users'),
     places = require('./routes/places'),
     upload = require('./routes/upload'),
-    controller = require('./controllers/controller');
+    controller = require('./controllers/controller'),
+    passport = require('passport');
 
 // app creation
 const app = express();
@@ -41,9 +42,12 @@ app.use(restAPIchecks);
 mongoose.connect(config.database);
 
 app.use('/auth', auth);
+// app.use(controller.methodNotAllowed);
+// app.use(controller.sendToClient);
+
 
 // use passport jwt strategy for all following routes
-app.all('*', passport.authenticate('jwt', { session: false }));
+app.all(['/upload', '/places', '/users', '/pictures', '/components'], passport.authenticate('jwt', { session: false }));
 
 app.use('/upload', upload);
 app.use('/places', places);

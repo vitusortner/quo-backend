@@ -29,7 +29,7 @@ places.route('/:id/pictures')
     .get(placeController.populatePictures)
     .post(placeController.createPicture);
 
-places.route('/qrcode/:qr_code_id/:user_id') // TODO sends methowed not allowed, even though logic happens
+places.route('/qrcode/:qr_code_id/:user_id')
     .get(placeController.readByQrCodeIdAndAddToVisitedPlaces);
 
 
