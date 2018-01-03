@@ -6,40 +6,31 @@
 */
 "use strict";
 
-
-var bodyParser = require('body-parser');
-var debug = require('debug');
-var morgan = require('morgan');
-const passport = require('passport');
-var validator = require('validator');
-var express = require('express'),
+const express = require('express'),
+    bodyParser = require('body-parser'),
+    morgan = require('morgan'),
     mongoose = require('mongoose'),
-    restful = require('node-restful'),
-    multer = require('multer'),
-    bcrypt = require('bcrypt-nodejs');
+    restful = require('node-restful');
 
 //own modules/routes
-var restAPIchecks = require('./restapi/request-checks');
-var errorResponseWare = require('./restapi/error-response');
-var HttpError = require('./restapi/http-error');
-var config = require('./config/main');
-
-var auth = require('./routes/auth');
-var users = require('./routes/users');
-var pictures = require('./routes/pictures');
-var places = require('./routes/places');
-var component = require('./routes/components');
-var upload = require('./routes/upload');
-
-
+const restAPIchecks = require('./restapi/request-checks'),
+    errorResponseWare = require('./restapi/error-response'),
+    HttpError = require('./restapi/http-error'),
+    config = require('./config/main'),
+    auth = require('./routes/auth'),
+    users = require('./routes/users'),
+    places = require('./routes/places'),
+    upload = require('./routes/upload'),
+    controller = require('./controllers/controller'),
+    passport = require('passport');
 
 // app creation
-var app = express();
+const app = express();
 
 //Middleware
 app.use(bodyParser.json());
 app.use(passport.initialize());
-var passportService = require('./config/passport');
+const passportService = require('./config/passport');
 
 // logging
 app.use(morgan('dev'));
@@ -51,32 +42,38 @@ app.use(restAPIchecks);
 mongoose.connect(config.database);
 
 app.use('/auth', auth);
+// app.use(controller.methodNotAllowed);
+// app.use(controller.sendToClient);
+
 
 // use passport jwt strategy for all following routes
-app.all('*', passport.authenticate('jwt', { session: false }));
+app.all(['/upload', '/places', '/users', '/pictures', '/components'], passport.authenticate('jwt', { session: false }));
 
 app.use('/upload', upload);
 app.use('/places', places);
 app.use('/users', users);
 
-var PictureSchema = require('./models/picture'),
+const PictureSchema = require('./models/picture'),
     ComponentSchema = require('./models/component');
 
-var picture = restful.model('pictures', PictureSchema)
+const picture = restful.model('pictures', PictureSchema)
     .methods(['get', 'put', 'delete']);
 
-var component = restful.model('components', ComponentSchema)
+const component = restful.model('components', ComponentSchema)
     .methods(['get', 'put', 'delete']);
 
 picture.register(app, '/pictures');
 component.register(app, '/components');
+
+app.use(controller.methodNotAllowed);
+app.use(controller.sendToClient);
 
 // (from express-generator boilerplate  standard code)
 // Errorhandling and requests without proper URLs ************************
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
     console.log('Catching unmatched request to answer with 404');
-    var err = new HttpError('Not Found', 404);
+    const err = new HttpError('Not Found', codes.notfound);
     next(err);
 });
 
@@ -89,6 +86,6 @@ app.listen(config.port, function (err) {
         console.log('Error on startup, ', err);
     }
     else {
-        console.log('Listening on port 3000');
+        console.log('Listening on port ' + config.port);
     }
 });

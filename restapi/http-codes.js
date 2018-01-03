@@ -15,5 +15,6 @@ module.exports = {
     conflict: 409,
     wrongdatatyperequest: 406,
     wrongmediasend: 415,
+    unprocessableentity: 422,
     servererror: 500
 };
