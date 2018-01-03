@@ -50,11 +50,14 @@ app.use(restAPIchecks);
 // Routes
 mongoose.connect(config.database);
 
-
-app.use('/upload', passport.authenticate('jwt', { session: false }), upload);
-app.use('/places', passport.authenticate('jwt', { session: false }), places);
-app.use('/users', users);
 app.use('/auth', auth);
+
+// use passport jwt strategy for all following routes
+app.all('*', passport.authenticate('jwt', { session: false }));
+
+app.use('/upload', upload);
+app.use('/places', places);
+app.use('/users', users);
 
 var PictureSchema = require('./models/picture'),
     ComponentSchema = require('./models/component');

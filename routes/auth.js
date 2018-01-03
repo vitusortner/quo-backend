@@ -21,7 +21,7 @@ const jwt = require('jsonwebtoken'),
 
 function generateToken(user) {
     return jwt.sign(user, config.secret, {
-        expiresIn: 10080 // in seconds
+        expiresIn: 2592000 // 30 days in seconds
     });
 }
 
@@ -41,7 +41,7 @@ auth.route('/login')
         let userInfo = setUserInfo(req.user);
 
         res.locals.items = {
-            token: 'JWT ' + generateToken(userInfo),
+            token: 'bearer ' + generateToken(userInfo),
             user: userInfo
         };
         res.locals.processed = true;
@@ -98,7 +98,7 @@ auth.route('/register')
                 let userInfo = setUserInfo(user);
 
                 res.locals.items = {
-                    token: 'JWT ' + generateToken(userInfo),
+                    token: 'bearer ' + generateToken(userInfo),
                     user: userInfo
                 };
                 res.locals.processed = true;

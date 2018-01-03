@@ -17,28 +17,12 @@ var users = express.Router();
 
 users.route('/')
 
-    .get(passport.authenticate('jwt', { session: false }), function (req, res, next) {
+    .get(function (req, res, next) {
         userModel.find({}, function (err, items) {
             res.locals.items = items;
             res.locals.processed = true;
             next();
         });
-    })
-
-    .post(function (req, res, next) {
-
-        var user = new userModel(req.body);
-        user.save(function (err) {
-            if (err) {
-                return next(err);
-            }
-            res.locals.processed = true;
-
-            res.locals.items = user;
-            res.status(codes.created);
-            next();
-        });
-
     })
 
     .all(function (req, res, next) {
