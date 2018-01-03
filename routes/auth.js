@@ -41,7 +41,7 @@ auth.route('/login')
         let userInfo = setUserInfo(req.user);
 
         res.locals.items = {
-            token: 'bearer ' + generateToken(userInfo),
+            token: generateToken(userInfo),
             user: userInfo
         };
         res.locals.processed = true;
@@ -98,7 +98,7 @@ auth.route('/register')
                 let userInfo = setUserInfo(user);
 
                 res.locals.items = {
-                    token: 'bearer ' + generateToken(userInfo),
+                    token: generateToken(userInfo),
                     user: userInfo
                 };
                 res.locals.processed = true;
