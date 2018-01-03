@@ -9,8 +9,6 @@
 // modules
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var bcrypt = require('bcrypt-nodejs');
-var validator = require('validator');
 
 
 var PlaceSchema = new Schema({
@@ -18,7 +16,7 @@ var PlaceSchema = new Schema({
         type: String,
         required: true
     },
-    title_picture_key: {
+    title_picture: {
         type: String,
         required: true
     },
@@ -42,15 +40,10 @@ var PlaceSchema = new Schema({
         required: true
     },
     address: {
-      street: { // street and number
-          type: String
-      },
-      city: {
-          type: String
-      },
-      zip_code: {
-          type: Number
-      }
+        name: String,
+        street: String,
+        city: String,
+        zip_code: Number
     },
     host: {
         type: String,
@@ -60,7 +53,7 @@ var PlaceSchema = new Schema({
         type: String,
         required: true
     },
-    qr_code_key: {
+    qr_code: {
         type: String
     },
     components: [{
@@ -80,7 +73,8 @@ var PlaceSchema = new Schema({
             type: Boolean,
             default: true
         }
-    }},{
+    }
+}, {
     timestamps: {
         createdAt: 'timestamp'
     }
