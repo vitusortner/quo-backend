@@ -47,6 +47,7 @@ auth.route('/login')
         res.locals.processed = true;
         next();
     })
+
     .all(function (req, res, next) {
         if (res.locals.processed) {
             next();
