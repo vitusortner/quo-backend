@@ -14,7 +14,8 @@ const codes = require('../restapi/http-codes'),
     AWS = require('aws-sdk'),
     multerS3 = require('multer-s3'),
     multer = require('multer'),
-    bcrypt = require('bcrypt-nodejs');
+    bcrypt = require('bcrypt-nodejs'),
+    config = require('../config/main');
 
 // Set the region
 AWS.config.update({region: 'eu-central-1'});
@@ -35,7 +36,7 @@ exports.create = function (req, res, next) {
                 cb(null, Object.assign({}, req.body));
             },
             key: function (req, file, cb) {
-                key = 'quo' + bcrypt.hashSync(Date.now());
+                key = ('quo' + bcrypt.hashSync(Date.now())).replace(/\//g, ".");
                 cb(null, path.basename(key));
             }
         })
@@ -46,7 +47,7 @@ exports.create = function (req, res, next) {
             return next(err);
         }
         res.locals.processed = true;
-        const path = "https://s3.eu-central-1.amazonaws.com/quo-picture-bucket/" + key;
+        const path = config.pictureBucket + key;
         res.locals.items = {"path": path};
         res.status(codes.created);
         next();
@@ -61,7 +62,7 @@ exports.readByKey = function (req, res, next) {
               Expires: 7760000 //90 days
           });*/
 
-    const path = "https://s3.eu-central-1.amazonaws.com/quo-picture-bucket/" + req.params.key;
+    const path = config.pictureBucket + req.params.key;
 
     res.locals.items = {"path": path};
     res.locals.processed = true;
