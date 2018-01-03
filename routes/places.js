@@ -8,7 +8,7 @@
 
 // modules
 const express = require('express'),
-    placeController= require('../controllers/placeController');
+    placeController = require('../controllers/placeController');
 
 const places = express.Router();
 
@@ -29,9 +29,8 @@ places.route('/:id/pictures')
     .get(placeController.populatePictures)
     .post(placeController.createPicture);
 
-places.route('/qrcode/:qr_code_id/:user_id')
+places.route('/qrcode/:qr_code_id/:user_id') // TODO sends methowed not allowed, even though logic happens
     .get(placeController.readByQrCodeIdAndAddToVisitedPlaces);
-
 
 
 module.exports = places;

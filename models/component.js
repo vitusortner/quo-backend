@@ -22,7 +22,8 @@ var ComponentSchema = new Schema({
     picture: {
         type: String,
         default: null
-    } },{
+    }
+}, {
     timestamps: {
         createdAt: 'timestamp'
     }

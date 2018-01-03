@@ -19,7 +19,7 @@
 var router = require('express').Router();
 
 // API-Version control. We use HTTP Header field Accept-Version instead of URL-part /v1/
-router.use(function(req, res, next){
+router.use(function (req, res, next) {
     // expect the Accept-Version header to be NOT set or being 1.0
     var versionWanted = req.get('Accept-Version');
     if (versionWanted !== undefined && versionWanted !== '1.0') {
@@ -31,7 +31,7 @@ router.use(function(req, res, next){
 });
 
 // request type application/json or multipart/form-data check
-router.use(function(req, res, next) {
+router.use(function (req, res, next) {
     if (['POST', 'PUT', 'PATCH'].indexOf(req.method) > -1 &&
         (!( /application\/json/.test(req.get('Content-Type')) ) && !( /multipart\/form-data/.test(req.get('Content-Type')) ))) {
         // send error code 415: unsupported media type
@@ -48,7 +48,7 @@ router.use(function(req, res, next) {
 
 
 // request POST, PUT check that any content was send
-router.use(function(req, res, next) {
+router.use(function (req, res, next) {
     var err = undefined;
     if (['POST', 'PUT', 'PATCH'].indexOf(req.method) > -1 && parseInt(req.get('Content-Length')) === 0) {
         err = new Error("content in body is missing");

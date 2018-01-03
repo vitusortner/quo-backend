@@ -17,7 +17,7 @@ module.exports = function registerErrorHandlers(app) {
     // development error handler
     // will print stacktrace as JSON response
     if (app.get('env') === 'development') {
-        app.use(function(err, req, res, next) {
+        app.use(function (err, req, res, next) {
             logger('Internal Error: ', err.stack);
             res.status(err.status || 500);
             res.json({

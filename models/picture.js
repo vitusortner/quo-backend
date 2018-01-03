@@ -26,7 +26,8 @@ var PictureSchema = new Schema({
     is_visible: {
         type: Boolean,
         default: true
-    } },{
+    }
+}, {
     timestamps: {
         createdAt: 'timestamp'
     }
