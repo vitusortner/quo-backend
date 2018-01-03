@@ -265,9 +265,6 @@ exports.readByQrCodeIdAndAddToVisitedPlaces = function (req, res, next) {
                         err = new HttpError(err.message, codes.wrongrequest);
                         return next(err);
                     }
-                    res.locals.items = place;
-                    res.locals.processed = true;
-                    return next();
                 })
             }
             res.locals.items = place;

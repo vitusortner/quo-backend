@@ -8,12 +8,9 @@
 
 const express = require('express'),
     bodyParser = require('body-parser'),
-    debug = require('debug'),
     morgan = require('morgan'),
-    validator = require('validator'),
     mongoose = require('mongoose'),
-    restful = require('node-restful'),
-    multer = require('multer');
+    restful = require('node-restful');
 
 //own modules/routes
 const restAPIchecks = require('./restapi/request-checks'),
