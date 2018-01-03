@@ -17,13 +17,14 @@ var express = require('express'),
     path = require('path'),
     bcrypt = require('bcrypt-nodejs');
 
+
 // Set the region
 AWS.config.update({region: 'eu-central-1'});
 //get creddentials from shared local file
 var credentials = new AWS.SharedIniFileCredentials();
 AWS.config.credentials = credentials;
 var s3 = new AWS.S3();
-
+const baseURL = "https://s3.eu-central-1.amazonaws.com/quo-picture-bucket/";
 var upload = express.Router();
 
 upload.route('/')
@@ -54,6 +55,7 @@ upload.route('/')
                 },
                 key: function (req, file, cb) {
                     key= 'quo'+ bcrypt.hashSync(Date.now());
+                    key.replace("/","_");
                     cb(null, path.basename(key));
                 }
             })
@@ -64,7 +66,7 @@ upload.route('/')
                 return next(err);
             }
             res.locals.processed = true;
-            const path= "https://s3.eu-central-1.amazonaws.com/quo-picture-bucket/"+ key;
+            const path= baseURL+ key;
             res.locals.items = {"path":path};
             res.status(codes.created);
             next();
@@ -88,7 +90,7 @@ upload.route('/:key')
             Expires: 7760000 //90 days
         });*/
 
-       const path = "https://s3.eu-central-1.amazonaws.com/quo-picture-bucket/"+ req.params.key;
+       const path = baseURL+ req.params.key;
 
         res.locals.items = {"path": path};
         res.locals.processed = true;
