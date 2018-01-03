@@ -24,7 +24,6 @@ var credentials = new AWS.SharedIniFileCredentials();
 AWS.config.credentials = credentials;
 var s3 = new AWS.S3();
 
-
 var upload = express.Router();
 
 upload.route('/')
@@ -65,7 +64,8 @@ upload.route('/')
                 return next(err);
             }
             res.locals.processed = true;
-            res.locals.items = {"key":key};
+            const path= "https://s3.eu-central-1.amazonaws.com/quo-picture-bucket/"+ key;
+            res.locals.items = {"path":path};
             res.status(codes.created);
             next();
         });
@@ -82,17 +82,17 @@ upload.route('/')
 
 upload.route('/:key')
     .get(function (req, res, next) {
-        var params = {
+       /* const path = s3.getSignedUrl('getObject', {
             Bucket: "quo-picture-bucket",
-            Key: req.params.key
-        };
+            Key: req.params.key,
+            Expires: 7760000 //90 days
+        });*/
 
-        s3.getObject(params, function (err, data) {
-            if (err) {
-                next(err);
-            }
-            res.send({ data });
-        });
+       const path = "https://s3.eu-central-1.amazonaws.com/quo-picture-bucket/"+ req.params.key;
+
+        res.locals.items = {"path": path};
+        res.locals.processed = true;
+        next();
 
     });
 
