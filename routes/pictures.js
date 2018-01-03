@@ -43,7 +43,7 @@ pictures.route('/:id')
  *       "_id": "123456",
  *       "updatedAt": "yyyy-MM-dd'T'HH:mm:ss'Z",
  *       "timestamp": "yyyy-MM-dd'T'HH:mm:ss'Z",
- *       "src": "www.s3.com",
+ *       "src": "www.aws.amazon.com",
  *       "owner": "987655",
  *       "place": "234567",
  *       "__v": 0,

@@ -45,7 +45,7 @@ components.route('/:id')
         "type": "Text",
         "position": 1,
         "__v": 0,
-        "picture": "www.s3.com",
+        "picture": "www.aws.amazon.com",
         "text": "Example Text"
  },
  *
@@ -68,7 +68,7 @@ components.route('/:id')
  *           "_id":"876543",
  *           "position":"1",
  *           "text":"Example Text",
- *           "picture":"www.s3.com",
+ *           "picture":"www.aws.amazon.com",
  * }
  *
  * @apiSuccess {Object} component  Component object that was created and added to the place.

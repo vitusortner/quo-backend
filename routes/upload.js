@@ -38,7 +38,13 @@ upload.route('/')
      * @apiParam {File} imgUpload     File you want to upload.
      * @apiHeader {String} Content-Type Required to be multipart/form-data
      *
-     * @apiSuccess {String} key  The unique image key.
+     * @apiSuccess {String} path  URL to the file.
+     *
+     * @apiSuccessExample {json} Success-Response:
+     * {
+     *  "path":"https://aws.amazon.com/picture-bucket/path"
+     * }
+     *
      * */
     .post(function (req, res, next) {
 
@@ -101,7 +107,13 @@ upload.route('/:key')
      *
      * @apiParam {String} key     Unique key of the file.
      *
-     * @apiSuccess {String} path  Presigned URL to the File, available for 90 Days.
+     * @apiSuccess {String} path  URL to the File.
+     *
+     * @apiSuccessExample {json} Success-Response:
+     * {
+     *  "path":"https://aws.amazon.com/picture-bucket/path"
+     * }
+     *
      * */
     .get(function (req, res, next) {
         var params = {

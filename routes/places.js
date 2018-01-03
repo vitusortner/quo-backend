@@ -69,7 +69,7 @@ places.route('/')
      * @apiParamExample {json} Request-Example:
      *{
      *           "title":"Example Place",
-     *           "title_picture":"www.s3.com",
+     *           "title_picture":"www.aws.amazon.com",
      *           "description":"A example place description"
      *           "start":"yyyy-MM-dd'T'HH:mm:ss'Z",
      *           "end":"yyyy-MM-dd'T'HH:mm:ss'Z",
@@ -82,7 +82,7 @@ places.route('/')
      *           },
      *           "host":"12345",
      *           "qr_code_id":"9A8B7C6D5F",
-     *           "qr_code":"www.s3.com",
+     *           "qr_code":"www.aws.amazon.com",
      *           "components":["1a2b3c4d5e6f7g8h9i10j11k"],
 	 *           "pictures":["1a2b3c4d5e6f7g8h9i10j11k"],
      *           "settings":{
@@ -154,8 +154,8 @@ places.route('/:id')
      *   "lat": 42,
      *   "long": 42,
      *   "qr_code_id": "378fz38rvh38rg",
-     *   "qr_code": "www.s3.com"
-     *   "title_picture": "www.s3.com",
+     *   "qr_code": "www.aws.amazon.com"
+     *   "title_picture": "www.aws.amazon.com",
      *   "description": "Schockt",
      *   "__v": 0,
      *   "settings": {
@@ -213,7 +213,7 @@ places.route('/:id')
      *{
      *           "_id":"12345",
      *           "title":"Other Place",
-     *           "title_picture":"www.s3.com",
+     *           "title_picture":"www.aws.amazon.com",
      *           "description":"Other description",
      *           "start":"yyyy-MM-dd'T'HH:mm:ss'Z",
      *           "end":"yyyy-MM-dd'T'HH:mm:ss'Z",
@@ -226,7 +226,7 @@ places.route('/:id')
      *           },
      *           "host":"54321",
      *           "qr_code_id":"9A8B7C6D5F",
-     *           "qr_code":"www.s3.com",
+     *           "qr_code":"www.aws.amazon.com",
      *           "components":["1a2b3c4d5e6f7g8h9i10j11k"],
 	 *           "pictures":["1a2b3c4d5e6f7g8h9i10j11k"],
      *           "settings":{
@@ -332,7 +332,7 @@ places.route('/:id/components')
      *{
      *           "position":"1",
      *           "text":"Example Text",
-     *           "picture":"www.s3.com",
+     *           "picture":"www.aws.amazon.com",
      *  }
      *
      * @apiSuccess {Object} component  Component object that was created and added to the place.
@@ -418,7 +418,7 @@ places.route('/:id/pictures')
      *
      * @apiParamExample {json} Request-Example:
      * {
-     *      "src":"www.s3.com",
+     *      "src":"www.aws.amazon.com",
      *      "place":"12345",
      *      "owner":"54321",
      *      "is_visible":true
