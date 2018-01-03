@@ -6,22 +6,25 @@
 */
 "use strict";
 
-var express = require('express');
+
 var bodyParser = require('body-parser');
 var debug = require('debug');
 var morgan = require('morgan');
+const passport = require('passport');
 var validator = require('validator');
 var express = require('express'),
     mongoose = require('mongoose'),
     restful = require('node-restful'),
-    multer = require('multer');
-
+    multer = require('multer'),
+    bcrypt = require('bcrypt-nodejs');
 
 //own modules/routes
 var restAPIchecks = require('./restapi/request-checks');
 var errorResponseWare = require('./restapi/error-response');
 var HttpError = require('./restapi/http-error');
+var config = require('./config/main');
 
+var auth = require('./routes/auth');
 var users = require('./routes/users');
 var pictures = require('./routes/pictures');
 var places = require('./routes/places');
@@ -35,6 +38,8 @@ var app = express();
 
 //Middleware
 app.use(bodyParser.json());
+app.use(passport.initialize());
+var passportService = require('./config/passport');
 
 // logging
 app.use(morgan('dev'));
@@ -43,7 +48,12 @@ app.use(morgan('dev'));
 app.use(restAPIchecks);
 
 // Routes
-mongoose.connect('mongodb://localhost:27017/quo');
+mongoose.connect(config.database);
+
+app.use('/auth', auth);
+
+// use passport jwt strategy for all following routes
+app.all('*', passport.authenticate('jwt', { session: false }));
 
 app.use('/upload', upload);
 app.use('/places', places);
@@ -74,7 +84,7 @@ app.use(function (req, res, next) {
 errorResponseWare(app);
 
 // Start server ****************************
-app.listen(3000, function (err) {
+app.listen(config.port, function (err) {
     if (err !== undefined) {
         console.log('Error on startup, ', err);
     }
