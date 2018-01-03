@@ -233,6 +233,9 @@ exports.readByQrCodeIdAndAddToVisitedPlaces = function (req, res, next) {
             res.locals.processed = true;
             return next();
         }
+        const startDate = place.start;
+        console.log(startDate);
+        console.log(Date.now());
         userModel.findById(user_id, function (err, user) {
             if (err) {
                 err = new HttpError(err.message, codes.wrongrequest);
