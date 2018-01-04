@@ -228,14 +228,17 @@ exports.readByQrCodeIdAndAddToVisitedPlaces = function (req, res, next) {
             err = new HttpError(err.message, codes.wrongrequest);
             return next(err);
         }
-        if (place.host === user_id) {
+        if ((place.host === user_id) || (place.start.getTime() > Date.now())) {
             res.locals.items = place;
             res.locals.processed = true;
             return next();
         }
-        const startDate = place.start;
-        console.log(startDate);
-        console.log(Date.now());
+        if (place.start.getTime() > Date.now()) {
+            console.log("Start date is in the future.");
+            res.locals.processed = true;
+            return next();
+        }
+
         userModel.findById(user_id, function (err, user) {
             if (err) {
                 err = new HttpError(err.message, codes.wrongrequest);
