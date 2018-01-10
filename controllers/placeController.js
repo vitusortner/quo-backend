@@ -59,10 +59,12 @@ exports.createAndAddToHostedPlaces = function (req, res, next) {
             };
             userModel.findByIdAndUpdate(host_id, set, validateOptions, function (err) {
                 if (err) {
+                    err = new HttpError(err.message, codes.wrongrequest);
                     return next(err);
                 }
                 place.save(function (err) {
                     if (err) {
+                        err = new HttpError(err.message, codes.wrongrequest);
                         return next(err);
                     }
                     res.locals.processed = true;
@@ -153,10 +155,12 @@ exports.createComponent = function (req, res, next) {
         };
         placeModel.findByIdAndUpdate(req.params.id, set, validateOptions, function (err) {
             if (err) {
+                err = new HttpError(err.message, codes.wrongrequest);
                 return next(err);
             }
             component.save(function (err) {
                 if (err) {
+                    err = new HttpError(err.message, codes.wrongrequest);
                     return next(err);
                 }
                 res.locals.processed = true;
@@ -204,10 +208,12 @@ exports.createPicture = function (req, res, next) {
         };
         placeModel.findByIdAndUpdate(req.params.id, set, validateOptions, function (err) {
             if (err) {
+                err = new HttpError(err.message, codes.wrongrequest);
                 return next(err);
             }
             picture.save(function (err) {
                 if (err) {
+                    err = new HttpError(err.message, codes.wrongrequest);
                     return next(err);
                 }
                 res.locals.processed = true;
