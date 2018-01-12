@@ -55,6 +55,7 @@ exports.register = function (req, res, next) {
 
     User.findOne({email: email}, function (err, existingUser) {
         if (err) {
+            err = new HttpError(err.message, codes.wrongrequest);
             return next(err);
         }
 
@@ -71,6 +72,7 @@ exports.register = function (req, res, next) {
 
         user.save(function (err, user) {
             if (err) {
+                err = new HttpError(err.message, codes.wrongrequest);
                 return next(err);
             }
 

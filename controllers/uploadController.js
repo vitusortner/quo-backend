@@ -44,6 +44,7 @@ exports.create = function (req, res, next) {
 
     upload(req, res, function (err) {
         if (err) {
+            err = new HttpError(err.message, codes.wrongrequest);
             return next(err);
         }
         res.locals.processed = true;
