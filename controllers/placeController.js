@@ -234,9 +234,13 @@ exports.readByQrCodeIdAndAddToVisitedPlaces = function (req, res, next) {
             return next();
         }
         if (place.start.getTime() > Date.now()) {
-            console.log("Start date is in the future.");
-            res.locals.processed = true;
-            return next();
+            const err = new HttpError("Start date is in the future.", codes.locked);
+            return next(err);
+        }
+
+        if (place.end.getTime() < Date.now()) {
+            const err = new HttpError("End date is in the past.", codes.gone);
+            return next(err);
         }
 
         userModel.findById(user_id, function (err, user) {

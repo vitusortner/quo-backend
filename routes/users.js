@@ -26,4 +26,3 @@ users.route('/:id/visited_places')
 users.route('/:id/hosted_places')
     .get(userController.populateHostedPlaces);
 
-module.exports = users;
